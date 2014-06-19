@@ -8,7 +8,11 @@ module Envoy
   module_function
 
   def start!
+    return if @started
+    Celluloid.start
+    AssetRefinery::Application.run!
     fetchers.each {|x| x.run }
+    @started = true
   end
 
   def config

@@ -1,4 +1,4 @@
-module AssetRefinery
+module Envoy
   class Broker
     include Celluloid
     include Celluloid::Logger

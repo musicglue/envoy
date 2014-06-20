@@ -1,4 +1,4 @@
-module AssetRefinery
+module Envoy
   class Dispatcher
     include Celluloid
     include Celluloid::Logger

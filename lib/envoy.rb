@@ -1,5 +1,15 @@
 require 'active_support'
 require 'active_support/core_ext'
+require 'celluloid'
+require 'uuid'
+
+require 'envoy/sqs/message'
+require 'envoy/sqs/queue'
+
+require 'envoy/broker'
+require 'envoy/dispatcher'
+require 'envoy/fetcher'
+require 'envoy/queue_manager'
 
 module Envoy
   VERSION = '1.0.0'
@@ -9,6 +19,7 @@ module Envoy
 
   def start!
     return if @started
+    require 'envoy/application'
     Celluloid.start
     AssetRefinery::Application.run!
     fetchers.each {|x| x.run }

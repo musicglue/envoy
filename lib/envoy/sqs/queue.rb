@@ -5,7 +5,7 @@ module Envoy
 
       attr_reader :connection, :queue_name
       def initialize(queue_name, options={})
-        @queue_name  = queue_name
+        @queue_name   = queue_name
         @connection   = Aws.sqs(options.merge(queue_name: queue_name))
         @mutext       = Mutex.new
         create_queue if missing_queue?

@@ -11,6 +11,8 @@ require 'envoy/dispatcher'
 require 'envoy/fetcher'
 require 'envoy/queue_directory'
 
+require 'envoy/railtie' if defined? Rails
+
 module Envoy
   VERSION = '1.0.0'
   ROOT_PATH = File.dirname(File.dirname(__FILE__))
@@ -21,7 +23,7 @@ module Envoy
     return if @started
     require 'envoy/application'
     Celluloid.start
-    AssetRefinery::Application.run!
+    Envoy::Application.run!
     fetchers.each {|x| x.run }
     config.client_actors.each {|x| x.run }
     @started = true

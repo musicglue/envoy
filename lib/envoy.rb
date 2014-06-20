@@ -9,7 +9,7 @@ require 'envoy/sqs/queue'
 require 'envoy/broker'
 require 'envoy/dispatcher'
 require 'envoy/fetcher'
-require 'envoy/queue_manager'
+require 'envoy/queue_directory'
 
 module Envoy
   VERSION = '1.0.0'

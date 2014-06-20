@@ -7,7 +7,7 @@ module Envoy
 
     attr_reader :currently_processing
 
-    def initialize(concurrency = 10, broker = Celluloid::Actor[:broker], queue = AssetRefinery.queue)
+    def initialize(concurrency, broker, queue)
       @currently_processing = Set.new
       @maximum_concurrently = concurrency
       @broker               = broker

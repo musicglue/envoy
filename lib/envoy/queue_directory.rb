@@ -19,7 +19,7 @@ module Envoy
     end
 
     def add_queue(name, options={})
-      @queue[name] = SQS::Queue.new(name, options)
+      @queues[name] = SQS::Queue.new(name, options)
     end
 
   end

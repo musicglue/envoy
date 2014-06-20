@@ -1,7 +1,10 @@
 Envoy.configure do |config|
 
   # Define your AWS Credentials here, available symbols are:
-  # config.credentials = { access_key_id: nil, secret_access_key: nil }
+  # config.aws.credentials = { access_key_id: nil, secret_access_key: nil }
+
+  # And region
+  # config.aws.region = 'eu-west-1'
 
   # Define the queues you wish to bind to
   # config.queues is an instance of Envoy::QueueDirectory, that provides an add_queue method

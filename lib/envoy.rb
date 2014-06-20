@@ -1,5 +1,6 @@
 require 'active_support'
 require 'active_support/core_ext'
+require 'aws-sdk-core'
 require 'celluloid'
 require 'uuid'
 
@@ -11,13 +12,23 @@ require 'envoy/dispatcher'
 require 'envoy/fetcher'
 require 'envoy/queue_directory'
 
-require 'envoy/railtie' if defined? Rails
+if defined? Rails
+  require 'envoy/railtie'
+  require 'envoy/worker'
+end
 
 module Envoy
   VERSION = '1.0.0'
   ROOT_PATH = File.dirname(File.dirname(__FILE__))
 
   module_function
+
+  def shutdown!
+    return unless @started
+    fetchers.each { |x| x.stop! }
+    config.client_actors.each { |x| x.terminate }
+    Celluloid.shutdown
+  end
 
   def start!
     return if @started
@@ -31,9 +42,12 @@ module Envoy
 
   def config
     @config ||= ActiveSupport::OrderedOptions.new.tap do |x|
-      x.credentials = {
-        access_key_id: nil,
-        secret_access_key: nil }
+      x.aws = ActiveSupport::OrderedOptions.new.tap do |aws|
+        aws.credentials = {
+          access_key_id: nil,
+          secret_access_key: nil }
+        aws.region    = 'eu-west-1'
+      end
       x.queues        = QueueDirectory.new
       x.concurrency   = 10
       x.mappings      = {}
@@ -41,8 +55,8 @@ module Envoy
       x.dispatcher    = Dispatcher
       x.client_actors = []
       x.messages      = ActiveSupport::OrderedOptions.new.tap do |m|
-        m.died          = ->(message) {}
-        m.unprocessable = ->(message) {}
+        m.died          = ->(message) { }
+        m.unprocessable = ->(message) { }
       end
     end
   end
@@ -51,8 +65,16 @@ module Envoy
     @fetchers ||= config.queues.map {|queue| Fetcher.new(split_concurrency, broker, queue) }
   end
 
+  def broker
+    Celluloid::Actor[:broker_pool]
+  end
+
+  def dispatcher
+    Celluloid::Actor[:dispatcher_pool]
+  end
+
   def credentials
-    @credentials ||= Aws::Credentials.new(config.credentials[:access_key_id], config.credentials[:secret_access_key])
+    @credentials ||= Aws::Credentials.new(config.aws.credentials[:access_key_id], config.aws.credentials[:secret_access_key])
   end
 
   def configure &block
@@ -63,9 +85,8 @@ module Envoy
     (ENV['RACK_ENV'] || ENV['RAILS_ENV'] || ENV['ENVOY_ENV'] || 'development').inquiry
   end
 
-  private
+  def split_concurrency
+    config.concurrency / config.queues.count
+  end
 
-    def split_concurrency
-      config.concurrency / config.queues.count
-    end
 end

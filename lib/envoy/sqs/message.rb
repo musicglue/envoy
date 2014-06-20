@@ -11,18 +11,20 @@ module Envoy
 
       attr_reader :id, :receipt
 
-      def initialize(packet, queue = AssetRefinery.queue, fetcher_id)
-        @fetcher_id = fetcher_id
-        @sqs = queue
-        @timer = after(INACTIVITY_TIMEOUT) { died }
-        @received_at = Time.now
-        @receipt = packet['ReceiptHandle'].strip
-        @id = packet['MessageId'].strip
+      def initialize(packet, queue, fetcher_id)
+        @fetcher_id   = fetcher_id
+        @sqs          = queue
+        @timer        = after(INACTIVITY_TIMEOUT) { died }
+        @received_at  = Time.now
+        @receipt      = packet[:receipt_handle].strip
+        @id           = packet[:message_id].strip
 
-        message_body = JSON.parse(packet['Body'])
-        @header = message_body['header']
-        @body = message_body['body']
-        @notifer = subscribe(notification_topic, :handle_notification)
+        message_body = JSON.parse(packet[:body])
+
+        @header   = message_body['header']
+        @body     = message_body['body']
+        @notifer  = subscribe(notification_topic, :handle_notification)
+
         fail InvalidMessageFormatError unless @header && @body
       rescue => e
         error e.inspect

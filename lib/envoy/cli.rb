@@ -28,6 +28,9 @@ module Envoy
       print_banner
       check_requirements
       Envoy.start!
+    rescue Interrupt
+      Envoy.shutdown!
+      exit(0)
     end
 
     def include_external_environment
@@ -85,10 +88,8 @@ module Envoy
     def handle_signal(signal)
       case signal
       when 'INT'
-        Envoy.shutdown!
         fail Interrupt
       when 'TERM'
-        Envoy.shutdown!
         fail Interrupt
       end
     end

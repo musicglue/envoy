@@ -12,6 +12,7 @@ module Envoy
     Celluloid.start
     AssetRefinery::Application.run!
     fetchers.each {|x| x.run }
+    config.client_actors.each {|x| x.run }
     @started = true
   end
 
@@ -20,11 +21,16 @@ module Envoy
       x.credentials = {
         access_key_id: nil,
         secret_access_key: nil }
-      x.queues      = QueueManager.new
-      x.concurrency = 10
-      x.mappings    = {}
-      x.broker      = Envoy::Broker
-      x.dispatcher  = Envoy::Dispatcher
+      x.queues        = QueueDirectory.new
+      x.concurrency   = 10
+      x.mappings      = {}
+      x.broker        = Broker
+      x.dispatcher    = Dispatcher
+      x.client_actors = []
+      x.messages      = ActiveSupport::OrderedOptions.new.tap do |m|
+        m.died          = ->(message) {}
+        m.unprocessable = ->(message) {}
+      end
     end
   end
 
@@ -38,6 +44,10 @@ module Envoy
 
   def configure &block
     yield(config)
+  end
+
+  def env
+    (ENV['RACK_ENV'] || ENV['RAILS_ENV'] || ENV['ENVOY_ENV'] || 'development').inquiry
   end
 
   private

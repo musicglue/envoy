@@ -10,15 +10,17 @@ module Envoy
     def initialize(concurrency = 10, broker = Celluloid::Actor[:broker], queue = AssetRefinery.queue)
       @currently_processing = Set.new
       @maximum_concurrently = concurrency
-      @broker = broker
-      @fetcher_id = SecureRandom.hex(4)
+      @broker               = broker
+      @run                  = true
+      @fetcher_id           = SecureRandom.hex(4)
+      @queue                = queue
+
       link @broker
-      @queue = queue
       subscribe "free_#{@fetcher_id}", :free_slot
     end
 
     def run
-      loop do
+      while @run do
         begin
           fetch
         rescue => e
@@ -26,6 +28,13 @@ module Envoy
         end
         sleep(1)
       end
+    end
+
+    def stop!
+      @run = false
+      info "[#{@queue.queue_name}] Stopping..."
+      sleep(2)
+      terminate
     end
 
     def fetch

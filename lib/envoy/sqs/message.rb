@@ -59,14 +59,14 @@ module Envoy
       end
 
       def died
+        Envoy.config.messages.died.call(self)
         info 'Message has errored and will be retried'
-        message_header = @header.merge(type: "#{type}_failed")
         terminate
       end
 
       def unprocessable
+        Envoy.config.messages.unprocessable.call(self)
         info 'Mark message as unprocessable and remove from queue'
-        message_header = @header.merge(type: "#{type}_unprocessable")
         @sqs.delete_message(@receipt)
         terminate
       end

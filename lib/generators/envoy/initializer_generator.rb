@@ -5,7 +5,6 @@ module Envoy
 
     desc "Create the initializer for Envoy"
     def copy_initializer_file
-      binding.pry
       copy_file "initializer.rb", "config/initializers/envoy.rb"
     end
 

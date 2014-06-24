@@ -26,11 +26,15 @@ module Envoy
       publish(@topic, :died)
     end
 
-    def process(&block)
-      raise 'No block given for perform' unless block_given?
+    def safely_process
       safely do
-        yield
+        process
       end
+    end
+
+    def process
+      #noop
+      raise NotImplemetedError
     end
 
     def safely

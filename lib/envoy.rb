@@ -12,9 +12,10 @@ require 'envoy/dispatcher'
 require 'envoy/fetcher'
 require 'envoy/queue_directory'
 
+require 'envoy/worker'
+
 if defined? Rails
   require 'envoy/railtie'
-  require 'envoy/worker'
 end
 
 module Envoy

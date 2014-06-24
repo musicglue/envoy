@@ -7,12 +7,13 @@ Envoy.configure do |config|
   # config.aws.region = 'eu-west-1'
 
   # Define the queues you wish to bind to
-  # config.queues is an instance of Envoy::QueueDirectory, that provides an add_queue method
+  # config.queues is an instance of Envoy::QueueDirectory, that provides an add_queue method, you should supply the queue name
+  # as an underscored symbol
   #
   # Add queue takes a name and an options hash, the options hash is passed directly to Aws.sqs, please see
   # documention on AWS for usage of the Aws.sqs class
 
-  # config.queues.add_queue('the-queue-name', { endpoint: 'http://localhost:6059' })
+  # config.queues.add_queue(:the_queue_name, { endpoint: 'http://localhost:6059' })
 
   # The maximum number of concurrent workers and brokers running
   # config.concurrency = 10

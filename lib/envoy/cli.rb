@@ -82,7 +82,7 @@ module Envoy
     def print_banner
       puts 'Booting Envoy'
       puts "Running with Rails application #{Rails.application.class.parent_name} in #{Envoy.env}" if defined? Rails
-      puts "Version: #{Envoy::VERSION} (Zlatan Ibrahimovic)"
+      puts "Version: #{Envoy::VERSION} (Space Rain)"
     end
 
     def handle_signal(signal)

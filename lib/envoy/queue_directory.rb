@@ -11,7 +11,7 @@ module Envoy
     end
 
     def [](value)
-      @queues[value]
+      @queues[value.to_s.underscore.to_sym]
     end
 
     def each(&block)
@@ -19,7 +19,7 @@ module Envoy
     end
 
     def add_queue(name, options={})
-      @queues[name] = SQS::Queue.new(name, options)
+      @queues[name.to_s.underscore.to_sym] = SQS::Queue.new(name.to_s.underscore.to_sym, options)
     end
 
   end

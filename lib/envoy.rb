@@ -3,6 +3,7 @@ require 'active_support/core_ext'
 require 'aws-sdk-core'
 require 'celluloid'
 require 'uuid'
+require 'ostruct'
 
 require 'envoy/sqs/message'
 require 'envoy/sqs/queue'

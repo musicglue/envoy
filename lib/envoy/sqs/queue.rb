@@ -56,7 +56,8 @@ module Envoy
 
       def pop(number)
         @mutex.synchronize do
-          connection.receive_message(queue_url: inbound_queue, max_number_of_messages: number).messages.map do |message|
+          messages = connection.receive_message(queue_url: inbound_queue, max_number_of_messages: number).messages || []
+          messages.map do |message|
             message
           end
         end

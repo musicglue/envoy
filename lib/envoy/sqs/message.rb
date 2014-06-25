@@ -39,7 +39,7 @@ module Envoy
       end
 
       def body
-        @body.with_indifferent_access if @body
+        OpenStruct.new(@body) if @body
       end
 
       def notification_topic

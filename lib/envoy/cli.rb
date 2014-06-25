@@ -28,6 +28,7 @@ module Envoy
       print_banner
       check_requirements
       Envoy.start!
+      sleep
     rescue Interrupt
       Envoy.shutdown!
       exit(0)
@@ -46,8 +47,9 @@ module Envoy
     private
 
     def check_requirements
-      errors = []
-      errors << '[FATAL] No queues defined' if Envoy.config.queues.count.zero?
+      errors, warnings = [], []
+      warnings << '[WARNING] No queues defined' if Envoy.config.queues.count.zero?
+      puts warnings.join("\n")
       unless errors.blank?
         puts errors.join("\n")
         exit(1)

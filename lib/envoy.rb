@@ -26,8 +26,8 @@ module Envoy
 
   def shutdown!
     return unless @started
-    fetchers.each { |x| x.stop! }
-    config.client_actors.each { |x| x.terminate }
+    fetchers.each { |x| x.stop }
+    config.client_actors.each { |x| x.respond_to?(:stop) ? x.stop : x.terminate }
     Celluloid.shutdown
   end
 
@@ -36,8 +36,9 @@ module Envoy
     require 'envoy/application'
     Celluloid.start
     Envoy::Application.run!
-    fetchers.each {|x| x.run }
-    config.client_actors.each {|x| x.run }
+    fetchers.each {|x| x.async.run }
+    config.client_actors.map!(&:new)
+    config.client_actors.each {|x| x.async.run }
     @started = true
   end
 
@@ -86,8 +87,12 @@ module Envoy
     (ENV['RACK_ENV'] || ENV['RAILS_ENV'] || ENV['ENVOY_ENV'] || 'development').inquiry
   end
 
+  def pool_count
+    config.queues.count < 2 ? 2 : config.queues.count
+  end
+
   def split_concurrency
-    config.concurrency / config.queues.count
+    config.concurrency
   end
 
 end

@@ -30,10 +30,9 @@ module Envoy
       end
     end
 
-    def stop!
+    def stop
       @run = false
       info "[#{@queue.queue_name}] Stopping..."
-      sleep(2)
       terminate
     end
 

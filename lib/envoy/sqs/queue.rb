@@ -15,8 +15,8 @@ module Envoy
         if @connected
           @connection
         else
-          create_queue if missing_queue?
           @connected = true
+          create_queue if missing_queue?
           @connection
         end
       end

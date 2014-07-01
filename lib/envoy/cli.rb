@@ -1,5 +1,4 @@
 require_relative '../envoy'
-require 'pry'
 require 'optparse'
 require 'fileutils'
 

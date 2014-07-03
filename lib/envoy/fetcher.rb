@@ -25,6 +25,7 @@ module Envoy
           fetch
         rescue => e
           error e.inspect
+          error e.backtrace
         end
         sleep(1)
       end

@@ -27,10 +27,6 @@ module Envoy
         @inbound_queue = nil
       end
 
-      def queue_list
-        @queues ||= connection.list_queues.queue_urls.map(&:strip)
-      end
-
       def create_queue
         connection.create_queue(queue_name: @queue_name)
       end
@@ -44,7 +40,7 @@ module Envoy
       end
 
       def inbound_queue
-        @inbound_queue ||= queue_list.find { |x| x =~ /#{@queue_name}/ }
+        @inbound_queue ||= connection.get_queue_url(queue_name: @queue_name).data.queue_url
       end
 
       def set_attribute(value={})

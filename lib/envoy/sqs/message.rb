@@ -1,7 +1,8 @@
 module Envoy
   module SQS
     class Message
-    class InvalidMessageFormatError < StandardError; end
+      class InvalidMessageFormatError < StandardError; end
+
       INACTIVITY_TIMEOUT = 10
       include Celluloid
       include Celluloid::Logger

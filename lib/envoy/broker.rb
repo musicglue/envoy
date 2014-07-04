@@ -16,8 +16,10 @@ module Envoy
     attr_writer :mappings
 
     def process_message(message)
-      if mappings.key? message.type
-        dispatcher.async.process(mappings[message.type].constantize, message)
+      mapping = mappings[message.type]
+
+      if mapping
+        dispatcher.async.process(mapping.constantize, message)
       else
         message.unprocessable
       end

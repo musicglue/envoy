@@ -47,7 +47,7 @@ module Envoy
       end
 
       def type
-        header[:type].to_sym
+        @type ||= header[:type].underscore.to_sym
       end
 
       def heartbeat

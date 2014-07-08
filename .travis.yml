@@ -1,0 +1,13 @@
+env:
+  global:
+    - ENVOY_ENV=test
+
+notifications:
+  hipchat: 4c9312238a5ef355ef8e321fc2bab7@Music Glue
+
+language: ruby
+
+rvm:
+  - ruby-2.1.2
+
+script: bundle exec rake test

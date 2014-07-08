@@ -61,13 +61,15 @@ module Envoy
       }
 
       parser = OptionParser.new do |o|
-        o.on '-r', '--require [PATH|DIR]', "Location of Rails application or file to require (defaults to current working directory)" do |arg|
+        o.on '-r',
+             '--require [PATH|DIR]',
+             'Location of Rails application or file to require (defaults to current working directory)' do |arg|
           @opts[:require] = arg
         end
       end
 
-      parser.banner = "Envoy [options]"
-      parser.on_tail "-h", "--help", "Show help" do
+      parser.banner = 'Envoy [options]'
+      parser.on_tail '-h', '--help', 'Show help' do
         puts parser
         exit(1)
       end

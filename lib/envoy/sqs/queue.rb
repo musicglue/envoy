@@ -4,7 +4,7 @@ module Envoy
       include Celluloid::Logger
 
       attr_reader :queue_name
-      def initialize(queue_name, options={})
+      def initialize(queue_name, options = {})
         options.reverse_merge! credentials: Envoy.credentials, region: Envoy.config.aws.region
         @queue_name   = [queue_name.to_s.dasherize, Envoy.env].join('-')
         @connection   = Aws.sqs(options)
@@ -32,7 +32,10 @@ module Envoy
       end
 
       def arn
-        @arn ||= connection.get_queue_attributes(queue_url: inbound_queue, attribute_names: ['QueueArn']).attributes['QueueArn'].strip
+        @arn ||= begin
+          response = connection.get_queue_attributes(queue_url: inbound_queue, attribute_names: ['QueueArn'])
+          response.attributes['QueueArn'].strip
+        end
       end
 
       def cmb?
@@ -40,11 +43,15 @@ module Envoy
       end
 
       def inbound_queue
-        @inbound_queue ||= connection.get_queue_url(queue_name: @queue_name).data.queue_url
+        @inbound_queue ||= begin
+          connection.get_queue_url(queue_name: @queue_name).data.queue_url
+        rescue Aws::SQS::Errors::NonExistentQueue
+          nil
+        end
       end
 
-      def set_attribute(value={})
-        connection.set_queue_attributes(queue_url: inbound_queue, attributes: value )
+      def attributes=(value = {})
+        connection.set_queue_attributes(queue_url: inbound_queue, attributes: value)
       end
 
       def missing_queue?
@@ -52,7 +59,9 @@ module Envoy
       end
 
       def extend_invisibility(message_handle, timeout)
-        connection.change_message_visibility(queue_url: inbound_queue, receipt_handle: message_handle, visibility_timeout: timeout)
+        connection.change_message_visibility(queue_url: inbound_queue,
+                                             receipt_handle: message_handle,
+                                             visibility_timeout: timeout)
       end
 
       def delete_message(message_handle)
@@ -67,7 +76,6 @@ module Envoy
           end
         end
       end
-
     end
   end
 end

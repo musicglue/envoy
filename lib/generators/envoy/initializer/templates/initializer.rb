@@ -1,4 +1,4 @@
-Envoy.configure do |config|
+Envoy.configure do |_config|
 
   # Define your AWS Credentials here, available symbols are:
   # config.aws.credentials = { access_key_id: nil, secret_access_key: nil }

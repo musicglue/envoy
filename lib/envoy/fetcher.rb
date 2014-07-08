@@ -20,13 +20,8 @@ module Envoy
     end
 
     def run
-      while @run do
-        begin
-          fetch
-        rescue => e
-          error e.inspect
-          error e.backtrace
-        end
+      while @run
+        fetch
         sleep(1)
       end
     end
@@ -40,6 +35,9 @@ module Envoy
     def fetch
       info "[#{@queue.queue_name}] Available Slots: #{available_slots}"
       fetch_messages if available_slots?
+    rescue => e
+      error "[#{@queue.queue_name}] #{e.inspect}"
+      error "[#{@queue.queue_name}] #{e.backtrace.take(10)}"
     end
 
     def process(message)
@@ -60,12 +58,12 @@ module Envoy
 
     private
 
-      def available_slots
-        @maximum_concurrently - @currently_processing.size
-      end
+    def available_slots
+      @maximum_concurrently - @currently_processing.size
+    end
 
-      def available_slots?
-        available_slots > 0
-      end
+    def available_slots?
+      available_slots > 0
+    end
   end
 end

@@ -1,0 +1,40 @@
+AllCops:
+  Include:
+    - Rakefile
+  Exclude:
+    - bin/**/*
+    - db/**/*
+    - config/**/*
+    - script/**/*
+    - vendor/**/*
+    - lib/generators/**/*
+
+AmbiguousOperator:
+  Enabled: false
+
+GuardClause:
+  Enabled: false
+
+ClassAndModuleChildren:
+  Enabled: false
+
+Documentation:
+  Enabled: false
+
+DoubleNegation:
+  Enabled: false
+
+Encoding:
+  EnforcedStyle: when_needed
+
+LineLength:
+  Max: 120
+
+MethodDefParentheses:
+  Enabled: false
+
+MethodLength:
+  Enabled: false
+
+MultilineBlockChain:
+  Enabled: false

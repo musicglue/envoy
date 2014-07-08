@@ -23,6 +23,18 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'thor'
   spec.add_runtime_dependency 'uuid', '~> 2.3'
 
+  spec.add_development_dependency "guard"
+  spec.add_development_dependency "guard-minitest"
+  spec.add_development_dependency "guard-rubocop"
+  spec.add_development_dependency "vcr"
+  spec.add_development_dependency "minitest-vcr"
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake"
+  spec.add_development_dependency "minitest"
+  spec.add_development_dependency "minitest-focus"
+  spec.add_development_dependency "minitest-rg"
+  spec.add_development_dependency "webmock"
+  spec.add_development_dependency "pry"
+  spec.add_development_dependency "simplecov"
+
 end

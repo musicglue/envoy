@@ -14,10 +14,7 @@ require 'envoy/fetcher'
 require 'envoy/queue_directory'
 
 require 'envoy/worker'
-
-if defined? Rails
-  require 'envoy/railtie'
-end
+require 'envoy/railtie' if defined? Rails
 
 module Envoy
   VERSION = '1.0.0'
@@ -37,9 +34,9 @@ module Envoy
     require 'envoy/application'
     Celluloid.start
     Envoy::Application.run!
-    fetchers.each {|x| x.async.run }
+    fetchers.each { |x| x.async.run }
     config.client_actors.map!(&:new)
-    config.client_actors.each {|x| x.async.run }
+    config.client_actors.each { |x| x.async.run }
     @started = true
   end
 
@@ -56,16 +53,17 @@ module Envoy
       x.mappings      = {}
       x.broker        = Broker
       x.dispatcher    = Dispatcher
+      x.queue         = SQS::Queue
       x.client_actors = []
       x.messages      = ActiveSupport::OrderedOptions.new.tap do |m|
-        m.died          = ->(message) { }
-        m.unprocessable = ->(message) { }
+        m.died          = ->(_message) {}
+        m.unprocessable = ->(_message) {}
       end
     end
   end
 
   def fetchers
-    @fetchers ||= config.queues.map {|queue| Fetcher.new(split_concurrency, broker, queue) }
+    @fetchers ||= config.queues.map { |queue| Fetcher.new(split_concurrency, broker, queue) }
   end
 
   def broker
@@ -77,10 +75,11 @@ module Envoy
   end
 
   def credentials
-    @credentials ||= Aws::Credentials.new(config.aws.credentials[:access_key_id], config.aws.credentials[:secret_access_key])
+    @credentials ||= Aws::Credentials.new(config.aws.credentials[:access_key_id],
+                                          config.aws.credentials[:secret_access_key])
   end
 
-  def configure &block
+  def configure &_block
     yield(config)
   end
 
@@ -95,5 +94,4 @@ module Envoy
   def split_concurrency
     config.concurrency
   end
-
 end

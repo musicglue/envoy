@@ -1,0 +1,220 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:6059/
+    body:
+      encoding: UTF-8
+      string: Action=GetQueueUrl&QueueName=test-queue-test&Version=2012-11-05
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.0.0.rc10 ruby/2.1.2 x86_64-darwin13.0 Seahorse/0.1.0
+      X-Amz-Date:
+      - 20140708T130600Z
+      Host:
+      - localhost
+      X-Amz-Content-Sha256:
+      - 217957fecf3e8ae86d02d651d7d4313b4f1b5074caa754af2294b153cac7d34d
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=6AADEZ8OTKNF30O7SU96/20140708/eu-west-1/sqs/aws4_request,
+        SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
+        Signature=08597e04d61a83d13ce6e703be364682d80823eb93894f519d0ac1c17ce90909
+      Content-Length:
+      - '63'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '270'
+      Server:
+      - Jetty(8.1.10.v20130312)
+    body:
+      encoding: UTF-8
+      string: "<GetQueueUrlResponse>\n\t<GetQueueUrlResult>\n\t\t<QueueUrl>http://eu-west-1.localhost:6059/397471395665/test-queue-test</QueueUrl>\n\t</GetQueueUrlResult>\n\t<ResponseMetadata><RequestId>f16bc29a-f5cb-4ce1-a82b-fd476d0489a8</RequestId></ResponseMetadata>\n</GetQueueUrlResponse>\n"
+    http_version: 
+  recorded_at: Tue, 08 Jul 2014 13:06:00 GMT
+- request:
+    method: post
+    uri: http://eu-west-1.localhost:6059/397471395665/test-queue-test
+    body:
+      encoding: UTF-8
+      string: Action=SendMessage&MessageBody=%7B%22header%22%3A%7B%22type%22%3A%22generate_zip_file%22%7D%2C%22body%22%3A%7B%22files%22%3A%5B%7B%22bucket%22%3A%22aws-test-bucket%22%2C%22path%22%3A%22test-path.jpg%22%7D%5D%2C%22destination%22%3A%7B%22bucket%22%3A%22aws-test-bucket%22%2C%22path%22%3A%22final-asset.zip%22%7D%7D%7D&QueueUrl=http%3A%2F%2Feu-west-1.localhost%3A6059%2F397471395665%2Ftest-queue-test&Version=2012-11-05
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.0.0.rc10 ruby/2.1.2 x86_64-darwin13.0 Seahorse/0.1.0
+      X-Amz-Date:
+      - 20140708T130600Z
+      Host:
+      - eu-west-1.localhost
+      X-Amz-Content-Sha256:
+      - 9d7a9e8658185c355893ecccc437caafc99ed92e8fb6a11ce7dec677e4f39115
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=6AADEZ8OTKNF30O7SU96/20140708/localhost:6059/397471395665/test-queue-test/sqs/aws4_request,
+        SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
+        Signature=bee031da754e3001d7fd4bc98c1fcbade38e9c544ac3830a8f8d5de5eb816572
+      Content-Length:
+      - '416'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '378'
+      Server:
+      - Jetty(8.1.10.v20130312)
+    body:
+      encoding: UTF-8
+      string: "<SendMessageResponse>\n\t<SendMessageResult>\n\t\t<MD5OfMessageBody>938fb1189d8e21f400fc61f749324dda</MD5OfMessageBody>\n\t\t<MessageId>1404824760093:0:e0ff04f8ca2a1b22887669e932a02969_0_27:2946131055276457995:-7593710027004277561</MessageId>\n\t</SendMessageResult>\n\t<ResponseMetadata><RequestId>2d5bb48d-74f3-4db0-b0f4-9336aa85fed3</RequestId></ResponseMetadata>\n</SendMessageResponse>\n"
+    http_version: 
+  recorded_at: Tue, 08 Jul 2014 13:06:00 GMT
+- request:
+    method: post
+    uri: http://eu-west-1.localhost:6059/397471395665/test-queue-test
+    body:
+      encoding: UTF-8
+      string: Action=ReceiveMessage&MaxNumberOfMessages=1&QueueUrl=http%3A%2F%2Feu-west-1.localhost%3A6059%2F397471395665%2Ftest-queue-test&Version=2012-11-05
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.0.0.rc10 ruby/2.1.2 x86_64-darwin13.0 Seahorse/0.1.0
+      X-Amz-Date:
+      - 20140708T130600Z
+      Host:
+      - eu-west-1.localhost
+      X-Amz-Content-Sha256:
+      - 79ac04f60f82b7b9d92bb5f8ed0136e5503679fa9b2dc44281331263e0f18536
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=6AADEZ8OTKNF30O7SU96/20140708/localhost:6059/397471395665/test-queue-test/sqs/aws4_request,
+        SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
+        Signature=bb700e2cbf9993f4bdbddd58c038a464991fb77f203823537478885a446853e6
+      Content-Length:
+      - '144'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '1202'
+      Server:
+      - Jetty(8.1.10.v20130312)
+    body:
+      encoding: UTF-8
+      string: "<ReceiveMessageResponse>\n\t<ReceiveMessageResult>\n\t\t<Message>\n\t\t\t<MessageId>1404814111952:0:e0ff04f8ca2a1b22887669e932a02969_0_56:2946108724506263556:-7593710027004277561</MessageId>\n\t\t\t<ReceiptHandle>1404814111952:0:e0ff04f8ca2a1b22887669e932a02969_0_56:2946108724506263556:-7593710027004277561</ReceiptHandle>\n\t\t\t<MD5OfBody>938fb1189d8e21f400fc61f749324dda</MD5OfBody>\n\t\t\t<Body>{&quot;header&quot;:{&quot;type&quot;:&quot;generate_zip_file&quot;},&quot;body&quot;:{&quot;files&quot;:[{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;test-path.jpg&quot;}],&quot;destination&quot;:{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;final-asset.zip&quot;}}}</Body>\n\t\t\t<Attribute><Name>ApproximateReceiveCount</Name><Value>3</Value></Attribute>\n\t\t\t<Attribute><Name>SentTimestamp</Name><Value>1404814111951</Value></Attribute>\n\t\t\t<Attribute><Name>SenderId</Name><Value>397471395665</Value></Attribute>\n\t\t\t<Attribute><Name>ApproximateFirstReceiveTimestamp</Name><Value>1404814279404</Value></Attribute>\n\t\t</Message>\n\t</ReceiveMessageResult>\n\t<ResponseMetadata><RequestId>aefb4731-8248-48d4-b267-54781ba781ba</RequestId></ResponseMetadata>\n</ReceiveMessageResponse>\n"
+    http_version: 
+  recorded_at: Tue, 08 Jul 2014 13:06:00 GMT
+- request:
+    method: post
+    uri: http://eu-west-1.localhost:6059/397471395665/test-queue-test
+    body:
+      encoding: UTF-8
+      string: Action=DeleteMessage&QueueUrl=http%3A%2F%2Feu-west-1.localhost%3A6059%2F397471395665%2Ftest-queue-test&ReceiptHandle=1404814111952%3A0%3Ae0ff04f8ca2a1b22887669e932a02969_0_56%3A2946108724506263556%3A-7593710027004277561&Version=2012-11-05
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.0.0.rc10 ruby/2.1.2 x86_64-darwin13.0 Seahorse/0.1.0
+      X-Amz-Date:
+      - 20140708T130600Z
+      Host:
+      - eu-west-1.localhost
+      X-Amz-Content-Sha256:
+      - ca508dd755e4e4f686a65c81d4331fd522b7b7b5f4bd2023f6f2d9c1f87efba6
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=6AADEZ8OTKNF30O7SU96/20140708/localhost:6059/397471395665/test-queue-test/sqs/aws4_request,
+        SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
+        Signature=5692c941fdb960a6faf86a062c735710e2b645c4829fc2136ab9ea5f373ba478
+      Content-Length:
+      - '238'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '147'
+      Server:
+      - Jetty(8.1.10.v20130312)
+    body:
+      encoding: UTF-8
+      string: "<DeleteMessageResponse>\n\t<ResponseMetadata><RequestId>812d8f46-4612-4419-953f-951ce00e7912</RequestId></ResponseMetadata>\n</DeleteMessageResponse>\n"
+    http_version: 
+  recorded_at: Tue, 08 Jul 2014 13:06:00 GMT
+- request:
+    method: post
+    uri: http://eu-west-1.localhost:6059/397471395665/test-queue-test
+    body:
+      encoding: UTF-8
+      string: Action=ReceiveMessage&MaxNumberOfMessages=10&QueueUrl=http%3A%2F%2Feu-west-1.localhost%3A6059%2F397471395665%2Ftest-queue-test&Version=2012-11-05
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.0.0.rc10 ruby/2.1.2 x86_64-darwin13.0 Seahorse/0.1.0
+      X-Amz-Date:
+      - 20140708T130600Z
+      Host:
+      - eu-west-1.localhost
+      X-Amz-Content-Sha256:
+      - 98847549385529a64db01d52bf7a62dd03524b989b8d619c900be60bcc5f3420
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=6AADEZ8OTKNF30O7SU96/20140708/localhost:6059/397471395665/test-queue-test/sqs/aws4_request,
+        SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
+        Signature=eda008a38c6c808db465c20ba84c3889aa4b5d18d404569124090f7385bbe435
+      Content-Length:
+      - '145'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '9029'
+      Server:
+      - Jetty(8.1.10.v20130312)
+    body:
+      encoding: UTF-8
+      string: "<ReceiveMessageResponse>\n\t<ReceiveMessageResult>\n\t\t<Message>\n\t\t\t<MessageId>1404824760093:0:e0ff04f8ca2a1b22887669e932a02969_0_27:2946131055276457995:-7593710027004277561</MessageId>\n\t\t\t<ReceiptHandle>1404824760093:0:e0ff04f8ca2a1b22887669e932a02969_0_27:2946131055276457995:-7593710027004277561</ReceiptHandle>\n\t\t\t<MD5OfBody>938fb1189d8e21f400fc61f749324dda</MD5OfBody>\n\t\t\t<Body>{&quot;header&quot;:{&quot;type&quot;:&quot;generate_zip_file&quot;},&quot;body&quot;:{&quot;files&quot;:[{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;test-path.jpg&quot;}],&quot;destination&quot;:{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;final-asset.zip&quot;}}}</Body>\n\t\t\t<Attribute><Name>ApproximateReceiveCount</Name><Value>1</Value></Attribute>\n\t\t\t<Attribute><Name>SentTimestamp</Name><Value>1404824760092</Value></Attribute>\n\t\t\t<Attribute><Name>SenderId</Name><Value>397471395665</Value></Attribute>\n\t\t\t<Attribute><Name>ApproximateFirstReceiveTimestamp</Name><Value>1404824760122</Value></Attribute>\n\t\t</Message>\n\t\t<Message>\n\t\t\t<MessageId>1404814047629:0:e0ff04f8ca2a1b22887669e932a02969_0_7:2946108589611155457:-7593710027004277561</MessageId>\n\t\t\t<ReceiptHandle>1404814047629:0:e0ff04f8ca2a1b22887669e932a02969_0_7:2946108589611155457:-7593710027004277561</ReceiptHandle>\n\t\t\t<MD5OfBody>938fb1189d8e21f400fc61f749324dda</MD5OfBody>\n\t\t\t<Body>{&quot;header&quot;:{&quot;type&quot;:&quot;generate_zip_file&quot;},&quot;body&quot;:{&quot;files&quot;:[{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;test-path.jpg&quot;}],&quot;destination&quot;:{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;final-asset.zip&quot;}}}</Body>\n\t\t\t<Attribute><Name>ApproximateReceiveCount</Name><Value>5</Value></Attribute>\n\t\t\t<Attribute><Name>SentTimestamp</Name><Value>1404814047628</Value></Attribute>\n\t\t\t<Attribute><Name>SenderId</Name><Value>397471395665</Value></Attribute>\n\t\t\t<Attribute><Name>ApproximateFirstReceiveTimestamp</Name><Value>1404814057175</Value></Attribute>\n\t\t</Message>\n\t\t<Message>\n\t\t\t<MessageId>1404814111918:0:e0ff04f8ca2a1b22887669e932a02969_0_63:2946108724434960387:-7593710027004277561</MessageId>\n\t\t\t<ReceiptHandle>1404814111918:0:e0ff04f8ca2a1b22887669e932a02969_0_63:2946108724434960387:-7593710027004277561</ReceiptHandle>\n\t\t\t<MD5OfBody>938fb1189d8e21f400fc61f749324dda</MD5OfBody>\n\t\t\t<Body>{&quot;header&quot;:{&quot;type&quot;:&quot;generate_zip_file&quot;},&quot;body&quot;:{&quot;files&quot;:[{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;test-path.jpg&quot;}],&quot;destination&quot;:{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;final-asset.zip&quot;}}}</Body>\n\t\t\t<Attribute><Name>ApproximateReceiveCount</Name><Value>4</Value></Attribute>\n\t\t\t<Attribute><Name>SentTimestamp</Name><Value>1404814111917</Value></Attribute>\n\t\t\t<Attribute><Name>SenderId</Name><Value>397471395665</Value></Attribute>\n\t\t\t<Attribute><Name>ApproximateFirstReceiveTimestamp</Name><Value>1404814116748</Value></Attribute>\n\t\t</Message>\n\t\t<Message>\n\t\t\t<MessageId>1404809952068:0:e0ff04f8ca2a1b22887669e932a02969_0_81:2946100000477675520:-7593710027004277561</MessageId>\n\t\t\t<ReceiptHandle>1404809952068:0:e0ff04f8ca2a1b22887669e932a02969_0_81:2946100000477675520:-7593710027004277561</ReceiptHandle>\n\t\t\t<MD5OfBody>a482d625d99db5e5c1ed4abe65c709f8</MD5OfBody>\n\t\t\t<Body>{&apos;header&apos;:
+        {&apos;type&apos;: &apos;test&apos;}, &apos;body&apos;: { &apos;method&apos;:
+        &apos;call&apos;}}\r\n</Body>\n\t\t\t<Attribute><Name>ApproximateReceiveCount</Name><Value>6</Value></Attribute>\n\t\t\t<Attribute><Name>SentTimestamp</Name><Value>1404809952007</Value></Attribute>\n\t\t\t<Attribute><Name>SenderId</Name><Value>397471395665</Value></Attribute>\n\t\t\t<Attribute><Name>ApproximateFirstReceiveTimestamp</Name><Value>1404810124657</Value></Attribute>\n\t\t</Message>\n\t\t<Message>\n\t\t\t<MessageId>1404814247225:0:e0ff04f8ca2a1b22887669e932a02969_0_13:2946109008194306054:-7593710027004277561</MessageId>\n\t\t\t<ReceiptHandle>1404814247225:0:e0ff04f8ca2a1b22887669e932a02969_0_13:2946109008194306054:-7593710027004277561</ReceiptHandle>\n\t\t\t<MD5OfBody>938fb1189d8e21f400fc61f749324dda</MD5OfBody>\n\t\t\t<Body>{&quot;header&quot;:{&quot;type&quot;:&quot;generate_zip_file&quot;},&quot;body&quot;:{&quot;files&quot;:[{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;test-path.jpg&quot;}],&quot;destination&quot;:{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;final-asset.zip&quot;}}}</Body>\n\t\t\t<Attribute><Name>ApproximateReceiveCount</Name><Value>3</Value></Attribute>\n\t\t\t<Attribute><Name>SentTimestamp</Name><Value>1404814247223</Value></Attribute>\n\t\t\t<Attribute><Name>SenderId</Name><Value>397471395665</Value></Attribute>\n\t\t\t<Attribute><Name>ApproximateFirstReceiveTimestamp</Name><Value>1404814279457</Value></Attribute>\n\t\t</Message>\n\t\t<Message>\n\t\t\t<MessageId>1404814279428:0:e0ff04f8ca2a1b22887669e932a02969_0_27:2946109075728891912:-7593710027004277561</MessageId>\n\t\t\t<ReceiptHandle>1404814279428:0:e0ff04f8ca2a1b22887669e932a02969_0_27:2946109075728891912:-7593710027004277561</ReceiptHandle>\n\t\t\t<MD5OfBody>938fb1189d8e21f400fc61f749324dda</MD5OfBody>\n\t\t\t<Body>{&quot;header&quot;:{&quot;type&quot;:&quot;generate_zip_file&quot;},&quot;body&quot;:{&quot;files&quot;:[{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;test-path.jpg&quot;}],&quot;destination&quot;:{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;final-asset.zip&quot;}}}</Body>\n\t\t\t<Attribute><Name>ApproximateReceiveCount</Name><Value>3</Value></Attribute>\n\t\t\t<Attribute><Name>SentTimestamp</Name><Value>1404814279427</Value></Attribute>\n\t\t\t<Attribute><Name>SenderId</Name><Value>397471395665</Value></Attribute>\n\t\t\t<Attribute><Name>ApproximateFirstReceiveTimestamp</Name><Value>1404814279457</Value></Attribute>\n\t\t</Message>\n\t\t<Message>\n\t\t\t<MessageId>1404814279395:0:e0ff04f8ca2a1b22887669e932a02969_0_0:2946109075659685895:-7593710027004277561</MessageId>\n\t\t\t<ReceiptHandle>1404814279395:0:e0ff04f8ca2a1b22887669e932a02969_0_0:2946109075659685895:-7593710027004277561</ReceiptHandle>\n\t\t\t<MD5OfBody>938fb1189d8e21f400fc61f749324dda</MD5OfBody>\n\t\t\t<Body>{&quot;header&quot;:{&quot;type&quot;:&quot;generate_zip_file&quot;},&quot;body&quot;:{&quot;files&quot;:[{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;test-path.jpg&quot;}],&quot;destination&quot;:{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;final-asset.zip&quot;}}}</Body>\n\t\t\t<Attribute><Name>ApproximateReceiveCount</Name><Value>3</Value></Attribute>\n\t\t\t<Attribute><Name>SentTimestamp</Name><Value>1404814279394</Value></Attribute>\n\t\t\t<Attribute><Name>SenderId</Name><Value>397471395665</Value></Attribute>\n\t\t\t<Attribute><Name>ApproximateFirstReceiveTimestamp</Name><Value>1404814279458</Value></Attribute>\n\t\t</Message>\n\t\t<Message>\n\t\t\t<MessageId>1404814247190:0:e0ff04f8ca2a1b22887669e932a02969_0_92:2946109008120905733:-7593710027004277561</MessageId>\n\t\t\t<ReceiptHandle>1404814247190:0:e0ff04f8ca2a1b22887669e932a02969_0_92:2946109008120905733:-7593710027004277561</ReceiptHandle>\n\t\t\t<MD5OfBody>938fb1189d8e21f400fc61f749324dda</MD5OfBody>\n\t\t\t<Body>{&quot;header&quot;:{&quot;type&quot;:&quot;generate_zip_file&quot;},&quot;body&quot;:{&quot;files&quot;:[{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;test-path.jpg&quot;}],&quot;destination&quot;:{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;final-asset.zip&quot;}}}</Body>\n\t\t\t<Attribute><Name>ApproximateReceiveCount</Name><Value>3</Value></Attribute>\n\t\t\t<Attribute><Name>SentTimestamp</Name><Value>1404814247189</Value></Attribute>\n\t\t\t<Attribute><Name>SenderId</Name><Value>397471395665</Value></Attribute>\n\t\t\t<Attribute><Name>ApproximateFirstReceiveTimestamp</Name><Value>1404814279436</Value></Attribute>\n\t\t</Message>\n\t\t<Message>\n\t\t\t<MessageId>1404814054105:0:e0ff04f8ca2a1b22887669e932a02969_0_6:2946108603192311810:-7593710027004277561</MessageId>\n\t\t\t<ReceiptHandle>1404814054105:0:e0ff04f8ca2a1b22887669e932a02969_0_6:2946108603192311810:-7593710027004277561</ReceiptHandle>\n\t\t\t<MD5OfBody>938fb1189d8e21f400fc61f749324dda</MD5OfBody>\n\t\t\t<Body>{&quot;header&quot;:{&quot;type&quot;:&quot;generate_zip_file&quot;},&quot;body&quot;:{&quot;files&quot;:[{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;test-path.jpg&quot;}],&quot;destination&quot;:{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;final-asset.zip&quot;}}}</Body>\n\t\t\t<Attribute><Name>ApproximateReceiveCount</Name><Value>4</Value></Attribute>\n\t\t\t<Attribute><Name>SentTimestamp</Name><Value>1404814054104</Value></Attribute>\n\t\t\t<Attribute><Name>SenderId</Name><Value>397471395665</Value></Attribute>\n\t\t\t<Attribute><Name>ApproximateFirstReceiveTimestamp</Name><Value>1404814111926</Value></Attribute>\n\t\t</Message>\n\t</ReceiveMessageResult>\n\t<ResponseMetadata><RequestId>6c464f3f-cbb2-4e39-a453-0b43bf447ab0</RequestId></ResponseMetadata>\n</ReceiveMessageResponse>\n"
+    http_version: 
+  recorded_at: Tue, 08 Jul 2014 13:06:00 GMT
+recorded_with: VCR 2.9.2

@@ -33,8 +33,8 @@ module Envoy
     end
 
     def process
-      #noop
-      raise NotImplemetedError
+      # noop
+      fail NotImplemetedError
     end
 
     def safely
@@ -49,6 +49,5 @@ module Envoy
         terminate
       end
     end
-
   end
 end

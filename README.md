@@ -1,25 +1,55 @@
 # Envoy
 
-TODO: Write a gem description
+Bringing peace to the SQS Messaging world, way better than Rabbit!
+
+## Features
+
+- Celluloid based Actor framework for building queue consumers
+- Robust message handling, invisibility timeout handling, and pushback if messages failed
+- Hooks into the message lifecycle
+- Custom actors can be inserted into the main application loop, so you can execute other custom functionality, all in the same process
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add the gem into your Gemfile
+```ruby
+gem 'envoy', github: 'musicglue/envoy'
+```
 
-    gem 'envoy'
+Then Bundle
 
-And then execute:
+## Configuration
 
+### Rails
 
-    $ bundle
+If you are using this within a Rails applicaion Envoy comes with a handy generator to install an example configuration file
 
-Or install it yourself as:
+    $ rails g envoy:initializer
 
-    $ gem install envoy
+This will place a configuration file within the initializers directory, please follow the instructions there in order to configure Envoy.
+
+### Standalone (Untested)
+
+If you want to use this standalone, this behaviour is currently untested, however you should be able to create a configuration file, and then point the executable at it when running
+
+```ruby
+Envoy.configure do |config|
+    
+    config.aws.... # ETC
+
+end
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+To boot envoy, simply switch into the directory in question, and run
+
+    $ bundle exec envoy
+
+If you need to pass in a configuration file, such as in the standalone scenario, you'll need to do
+
+    $ bundle exec envoy -r path/to/file.rb
+    
 
 ## Contributing
 

@@ -4,21 +4,19 @@ module Envoy
       include Celluloid::Logger
 
       attr_reader :queue_name
-      def initialize(queue_name, options = {})
-        options.reverse_merge! credentials: Envoy.credentials, region: Envoy.config.aws.region
+
+      def initialize(queue_name, options={})
+        @options      = options.reverse_merge credentials: Envoy.credentials, region: Envoy.config.aws.region
         @queue_name   = [queue_name.to_s.dasherize, Envoy.env].join('-')
-        @connection   = Aws.sqs(options)
         @mutex        = Mutex.new
       end
 
       def connection
-        if @connected
-          @connection
-        else
-          @connected = true
-          create_queue if missing_queue?
-          @connection
-        end
+        return @connection if @connection
+
+        @connection = Aws.sqs @options
+        create_queue if missing_queue?
+        @connection
       end
 
       def refresh

@@ -23,6 +23,8 @@ require 'envoy'
 
 require 'support/mock_queue'
 require 'support/mock_broker'
+require 'support/worker'
+require 'support/broken_worker'
 
 VCR.configure do |config|
   config.cassette_library_dir = 'spec/fixtures/cassettes'

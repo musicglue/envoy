@@ -10,7 +10,7 @@ class MockQueue
   end
 
   def get(handle)
-    @read_messages.find { |x| x['ReceiptHandle'] == handle }
+    @read_messages.find { |x| x.receipt_handle == handle }
   end
 
   def push(message)
@@ -28,7 +28,7 @@ class MockQueue
   end
 
   def delete_message(handle)
-    @read_messages.reject! { |x| x['ReceiptHandle'] == handle }
+    @read_messages.reject! { |x| x.receipt_handle == handle }
   end
 
   def package(message)

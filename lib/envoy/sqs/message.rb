@@ -36,7 +36,7 @@ module Envoy
       end
 
       def header
-        @header.with_indifferent_access if @header
+        OpenStruct.new(@header) if @header
       end
 
       def body

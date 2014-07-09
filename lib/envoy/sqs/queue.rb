@@ -5,7 +5,7 @@ module Envoy
 
       attr_reader :queue_name
 
-      def initialize(queue_name, options={})
+      def initialize(queue_name, options = {})
         @options      = options.reverse_merge credentials: Envoy.credentials, region: Envoy.config.aws.region
         @queue_name   = [queue_name.to_s.dasherize, Envoy.env].join('-')
         @mutex        = Mutex.new

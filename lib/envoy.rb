@@ -17,7 +17,7 @@ require 'envoy/worker'
 require 'envoy/railtie' if defined? Rails
 
 module Envoy
-  VERSION = '1.0.0'
+  VERSION = '1.0.1'
   ROOT_PATH = File.dirname(File.dirname(__FILE__))
 
   module_function

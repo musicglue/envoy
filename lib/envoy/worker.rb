@@ -47,9 +47,9 @@ module Envoy
         error e.inspect
         failed
       ensure
+        info "[#{@message.queue_name}] Finished Processing #{@message.type} <#{@message.id}>"
         terminate
       end
-      info "[#{@message.queue_name}] Finished Processing #{@message.type} <#{@message.id}>"
     end
   end
 end

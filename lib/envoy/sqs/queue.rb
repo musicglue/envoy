@@ -66,10 +66,11 @@ module Envoy
         connection.delete_message(queue_url: inbound_queue, receipt_handle: message_handle)
       end
 
-      def pop(number)
+      def pop(number = 10)
         @mutex.synchronize do
-          messages = connection.receive_message(queue_url: inbound_queue, max_number_of_messages: number).messages || []
-          messages.map do |message|
+          response = connection.receive_message(queue_url: inbound_queue, max_number_of_messages: number)
+          return if response.data.nil?
+          response.messages.map do |message|
             message
           end
         end

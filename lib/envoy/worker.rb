@@ -39,6 +39,7 @@ module Envoy
 
     def safely
       return unless block_given?
+      info "[#{@message.queue.queue_name}] Processing #{@message.type} <#{@message.id}>"
       begin
         yield
         complete
@@ -48,6 +49,7 @@ module Envoy
       ensure
         terminate
       end
+      info "[#{@message.queue.queue_name}] Finished Processing #{@message.type} <#{@message.id}>"
     end
   end
 end

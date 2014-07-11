@@ -42,12 +42,13 @@ module Envoy
       info "[#{@message.queue_name}] Processing #{@message.type} <#{@message.id}>"
       begin
         yield
+        info "[#{@message.queue_name}] Finished Processing #{@message.type} <#{@message.id}>"
         complete
       rescue => e
-        error e.inspect
+        error "[#{@message.queue_name}] #{e.inspect}"
+        error "[#{@message.queue_name}] #{e.backtrace.take(10)}"
         failed
       ensure
-        info "[#{@message.queue_name}] Finished Processing #{@message.type} <#{@message.id}>"
         terminate
       end
     end

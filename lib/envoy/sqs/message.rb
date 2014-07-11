@@ -35,6 +35,10 @@ module Envoy
         return nil
       end
 
+      def queue_name
+        @sqs.queue_name
+      end
+
       def header
         OpenStruct.new(@header) if @header
       end

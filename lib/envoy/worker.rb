@@ -46,7 +46,7 @@ module Envoy
         complete
       rescue => e
         error "[#{@message.queue_name}] #{e.inspect}"
-        error "[#{@message.queue_name}] #{e.backtrace.take(10)}"
+        error "[#{@message.queue_name}] #{e.backtrace.join("\n")}"
         failed
       ensure
         terminate

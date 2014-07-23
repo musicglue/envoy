@@ -37,7 +37,7 @@ module Envoy
       fetch_messages if available_slots?
     rescue => e
       error "[#{@queue.queue_name}] #{e.inspect}"
-      error "[#{@queue.queue_name}] #{e.backtrace.take(10)}"
+      error "[#{@queue.queue_name}] #{e.backtrace.join("\n")}"
     end
 
     def process(message)

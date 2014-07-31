@@ -10,7 +10,8 @@ module Envoy
 
       finalizer :finalize
 
-      attr_reader :id, :receipt
+      attr_reader :id, :receipt, :header, :body
+      alias_method :headers, :header
 
       def initialize(packet, queue, fetcher_id)
         @fetcher_id   = fetcher_id
@@ -22,14 +23,14 @@ module Envoy
 
         message_body = JSON.parse(packet[:body])
 
-        @header   = message_body['header']
-        @body     = message_body['body']
+        @header   = message_body['header'].with_indifferent_access
+        @body     = message_body['body'].with_indifferent_access
         @notifer  = subscribe(notification_topic, :handle_notification)
 
         fail InvalidMessageFormatError unless @header && @body
       rescue => e
         error e.inspect
-        @header ||= { type: 'message' }
+        @header ||= { type: 'message' }.with_indifferent_access
         @body   ||= {}
         unprocessable
         return nil
@@ -37,14 +38,6 @@ module Envoy
 
       def queue_name
         @sqs.queue_name
-      end
-
-      def header
-        OpenStruct.new(@header) if @header
-      end
-
-      def body
-        OpenStruct.new(@body) if @body
       end
 
       def notification_topic

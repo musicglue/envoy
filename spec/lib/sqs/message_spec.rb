@@ -16,12 +16,30 @@ describe Envoy::SQS::Message do
 
     let(:packet) { mock_queue.pop(1).first }
 
-    it 'should return the header' do
-      described_class.header.type.must_equal SQS_MESSAGE_HASH['header']['type']
+    it 'should return the header as a hash' do
+      described_class.header.is_a?(Hash).must_equal true
     end
 
-    it 'should return the body' do
-      described_class.body.to_h.must_equal SQS_MESSAGE_HASH['body'].symbolize_keys
+    it 'should return the body as a hash' do
+      described_class.body.is_a?(Hash).must_equal true
+    end
+
+    it 'should return the whole header accessible using strings or keys' do
+      hash = described_class.header
+
+      SQS_MESSAGE_HASH['header'].each do |key, value|
+        hash[key.to_s].must_equal value
+        hash[key.to_sym].must_equal value
+      end
+    end
+
+    it 'should return the whole body accessible using strings or keys' do
+      hash = described_class.body
+
+      SQS_MESSAGE_HASH['body'].each do |key, value|
+        hash[key.to_s].must_equal value
+        hash[key.to_sym].must_equal value
+      end
     end
 
     it 'should declare its type' do
@@ -33,6 +51,11 @@ describe Envoy::SQS::Message do
       mock_queue.pop(1).first.must_be_nil
     end
 
+    it 'should be possible to use the headers method as an alias for header' do
+      key = SQS_MESSAGE_HASH['header'].keys.sample
+
+      described_class.headers[key].must_equal SQS_MESSAGE_HASH['header'][key]
+    end
   end
 
   describe 'with an invalid packet' do

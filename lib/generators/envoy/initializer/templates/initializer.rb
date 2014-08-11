@@ -10,8 +10,8 @@ Envoy.configure do |config|
   # config.queues is an instance of Envoy::QueueDirectory, that provides an add_queue method, you should supply the queue name
   # as an underscored symbol
   #
-  # Add queue takes a name and an options hash, the options hash is passed directly to Aws::SNS::Client.new, please see
-  # documention on AWS for usage of the Aws::SNS::Client class
+  # Add queue takes a name and an options hash, the options hash is passed directly to Aws::SQS::Client.new, please see
+  # documention on AWS for usage of the Aws::SQS::Client class
 
   # config.queues.add_queue(:the_queue_name, { endpoint: 'http://localhost:6059' })
 

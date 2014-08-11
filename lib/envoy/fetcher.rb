@@ -33,7 +33,7 @@ module Envoy
     end
 
     def fetch
-      info "[#{@queue.queue_name}] Available Slots: #{available_slots}"
+      debug "[#{@queue.queue_name}] Available Slots: #{available_slots}"
       fetch_messages if available_slots?
     rescue => e
       error "[#{@queue.queue_name}] #{e.inspect}"

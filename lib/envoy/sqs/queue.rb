@@ -14,7 +14,7 @@ module Envoy
       def connection
         return @connection if @connection
 
-        @connection = Aws.sqs @options
+        @connection = Aws::SNS::Client.new @options
         create_queue if missing_queue?
         @connection
       end

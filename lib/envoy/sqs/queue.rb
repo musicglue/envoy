@@ -7,7 +7,7 @@ module Envoy
 
       def initialize(queue_name, options = {})
         @options      = options.reverse_merge credentials: Envoy.credentials, region: Envoy.config.aws.region
-        @queue_name   = [queue_name.to_s.dasherize, Envoy.env].join('-')
+        @queue_name   = Envoy::QueueName.new(queue_name).to_s
         @mutex        = Mutex.new
       end
 

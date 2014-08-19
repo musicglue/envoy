@@ -23,6 +23,7 @@ require 'envoy'
 
 require 'support/mock_queue'
 require 'support/mock_broker'
+require 'support/mock_dispatcher'
 require 'support/worker'
 require 'support/broken_worker'
 

@@ -33,7 +33,7 @@ module Envoy
     end
 
     def fetch
-      debug "[#{@queue.queue_name}] Available Slots: #{available_slots}"
+      debug "[#{@queue.queue_name}] Available slots: #{available_slots}"
       fetch_messages if available_slots?
     rescue => e
       error "[#{@queue.queue_name}] #{e.inspect}"
@@ -44,7 +44,7 @@ module Envoy
       message = Envoy::SQS::Message.new(message, @queue, @fetcher_id)
       if message.alive?
         @currently_processing << message.id
-        @broker.process_message(message)
+        @broker.process_message(message, @queue)
       end
     end
 

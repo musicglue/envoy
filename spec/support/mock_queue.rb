@@ -4,7 +4,7 @@ class MockQueue
   attr_reader :queue, :queue_name
 
   def initialize(queue_name, _options = {})
-    @queue_name = [queue_name.to_s.dasherize, Envoy.env].join('-')
+    @queue_name = Envoy::QueueName.new(queue_name).to_s
     @queue = []
     @read_messages = []
   end

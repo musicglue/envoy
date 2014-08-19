@@ -5,6 +5,7 @@ require 'celluloid'
 require 'uuid'
 require 'ostruct'
 
+require 'envoy/queue_name'
 require 'envoy/sqs/message'
 require 'envoy/sqs/queue'
 

@@ -23,7 +23,12 @@ describe Envoy::Fetcher do
 
     describe 'after processing' do
 
-      let(:processed_message) { mock_broker.processed_messages.first }
+      let(:processed_message) { mock_broker.processed_messages.first.message }
+      let(:source_queue) { mock_broker.processed_messages.first.queue }
+
+      it 'notifies the broker which queue was the source of the message' do
+        source_queue.must_equal mock_queue
+      end
 
       describe 'successfully' do
 
@@ -85,7 +90,7 @@ describe Envoy::Fetcher do
     end
 
     it 'should free a slot and process again' do
-      mock_broker.processed_messages.first.complete
+      mock_broker.processed_messages.first.message.complete
       sleep 0.1
       described_class.fetch
       mock_broker.processed_messages.count.must_equal 2

@@ -47,7 +47,7 @@ module Envoy
         queue_map = @map[queue_name] || {}
 
         messages.each do |message_name, workflow_class|
-          queue_map[message_name.to_s] = workflow_class
+          queue_map[message_name.to_sym] = workflow_class
         end
 
         @map[queue_name] = queue_map

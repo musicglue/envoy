@@ -24,9 +24,13 @@ module Envoy
       workflow_class = queue_mappings[message.type] || queue_mappings['*']
       workflow_class = workflow_class.constantize if workflow_class.is_a? String
 
+      description = "#{message.type} message was received from #{queue.queue_name} queue"
+
       if workflow_class
+        debug "#{description} and was routed to #{workflow_class}"
         dispatcher.async.process(workflow_class, message)
       else
+        debug "#{description} and was unrouteable"
         message.unprocessable
       end
     rescue => e

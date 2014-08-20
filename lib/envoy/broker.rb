@@ -21,7 +21,7 @@ module Envoy
 
     def process_message(message, queue)
       queue_mappings = mappings[queue.queue_name]
-      workflow_class = queue_mappings[message.type] || queue_mappings['*']
+      workflow_class = queue_mappings[message.type] || queue_mappings[:'*']
       workflow_class = workflow_class.constantize if workflow_class.is_a? String
 
       description = "#{message.type} message was received from #{queue.queue_name} queue"

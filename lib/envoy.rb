@@ -4,6 +4,7 @@ require 'aws-sdk-core'
 require 'celluloid'
 require 'uuid'
 require 'ostruct'
+require 'middleware'
 
 require 'envoy/queue_name'
 require 'envoy/sqs/message'
@@ -13,6 +14,7 @@ require 'envoy/broker'
 require 'envoy/dispatcher'
 require 'envoy/fetcher'
 require 'envoy/queue_directory'
+require 'envoy/middlewares/worker'
 
 require 'envoy/worker'
 require 'envoy/railtie' if defined? Rails

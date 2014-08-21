@@ -10,6 +10,12 @@ module Envoy
       attr_reader :message, :topic, :timer
     end
 
+    module ClassMethods
+      def middleware
+        @middleware ||= []
+      end
+    end
+
     def initialize(message)
       @message = message
       @topic = @message.notification_topic
@@ -28,7 +34,9 @@ module Envoy
 
     def safely_process
       safely do
-        process
+        stack = ::Middleware::Builder.new
+        (self.class.middleware + [Envoy::Middlewares::Worker]).each { |m| stack.use m, self }
+        stack.call
       end
     end
 

@@ -7,7 +7,7 @@ AllCops:
     - config/**/*
     - script/**/*
     - vendor/**/*
-    - lib/generators/*
+    - lib/generators/**/*
 
 AmbiguousOperator:
   Enabled: false

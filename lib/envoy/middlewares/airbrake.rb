@@ -9,7 +9,7 @@ module Envoy
       def call env
         @app.call env
       rescue => e
-        ::Airbrake.notify_or_ignore e, params: { message: @worker.message.headers }
+        ::Airbrake.notify_or_ignore e, parameters: { message: @worker.message.headers }
         raise e
       end
     end

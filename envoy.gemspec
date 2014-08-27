@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency 'activesupport', "~> 4.1"
-  spec.add_runtime_dependency 'celluloid', "~> 0.15"
+  spec.add_runtime_dependency 'celluloid', "~> 0.16.0.pre3"
   spec.add_runtime_dependency 'aws-sdk-core'
   spec.add_runtime_dependency 'middleware'
   spec.add_runtime_dependency 'thor'

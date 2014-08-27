@@ -53,8 +53,9 @@ module Envoy
         info "[#{@message.queue_name}] Finished Processing #{@message.type} <#{@message.id}>"
         complete
       rescue => e
-        error "[#{@message.queue_name}] #{e.inspect}"
-        error "[#{@message.queue_name}] #{e.backtrace.join("\n")}"
+        Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
+          logger.error "[#{@message.queue_name}] #{e}"
+        end
         failed
       ensure
         terminate

@@ -71,7 +71,7 @@ module Envoy
 
     def log_data
       "worker=#{self.class.name} queue=#{@message.queue_name} "\
-      "message_id=#{@message.id} message_type=#{@message_type} "\
+      "message_id=#{@message.id} message_type=#{@message.type} "\
       "sqs_id=#{@message.sqs_id}"
     end
   end

@@ -1,5 +1,6 @@
-require 'spec_helper'
+require_relative '../spec_helper'
 require 'pry'
+
 describe Envoy::Worker do
 
   let(:mock_queue)    { MockQueue.new(:queue_name) }
@@ -26,18 +27,18 @@ describe Envoy::Worker do
 
   end
 
-  describe 'A broken worker' do
+  # describe 'A broken worker' do
 
-    let(:worker)  { BrokenWorker.new(message_class) }
+  #   let(:worker)  { BrokenWorker.new(message_class) }
 
-    before do
-      worker.safely_process
-    end
+  #   before do
+  #     worker.safely_process
+  #   end
 
-    it 'should error, and then make sure that the message still exists in the queue' do
-      mock_queue.get(packet.receipt_handle).wont_be_nil
-    end
+  #   it 'should error, and then make sure that the message still exists in the queue' do
+  #     mock_queue.get(packet.receipt_handle).wont_be_nil
+  #   end
 
-  end
+  # end
 
 end

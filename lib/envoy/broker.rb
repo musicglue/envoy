@@ -35,7 +35,9 @@ module Envoy
         message.unprocessable
       end
     rescue => e
-      error e.inspect
+      Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
+        logger.error "at=broker_error error=#{e} #{log_data}"
+      end
     end
   end
 

@@ -58,21 +58,21 @@ module Envoy
       end
 
       def complete
-        @sqs.delete_message(@receipt)
         debug "at=message_completed #{log_data}"
+        @sqs.delete_message(@receipt)
         terminate
       end
 
       def died
-        Envoy.config.messages.died.call(self)
         info "at=message_died retry=true #{log_data}"
+        Envoy.config.messages.died.call(self)
         terminate
       end
 
       def unprocessable
+        info "at=message_unprocessable retry=false #{log_data}"
         Envoy.config.messages.unprocessable.call(self)
         @sqs.delete_message(@receipt)
-        info "at=message_unprocessable retry=false #{log_data}"
         terminate
       end
 

@@ -21,11 +21,11 @@ require 'webmock'
 
 require 'envoy'
 
-require 'support/mock_queue'
-require 'support/mock_broker'
-require 'support/mock_dispatcher'
-require 'support/worker'
-require 'support/broken_worker'
+require_relative 'support/mock_queue'
+require_relative 'support/mock_broker'
+require_relative 'support/mock_dispatcher'
+require_relative 'support/worker'
+require_relative 'support/broken_worker'
 
 VCR.configure do |config|
   config.cassette_library_dir = 'spec/fixtures/cassettes'

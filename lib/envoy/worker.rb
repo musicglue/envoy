@@ -55,15 +55,15 @@ module Envoy
         yield
         end_time = Time.now
 
-        complete
-
         info "at=worker_end duration=#{(end_time - start_time).round}s #{log_data}"
-      rescue => e
-        failed
 
+        complete
+      rescue => e
         Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
           logger.error "at=worker_error error=#{e} #{log_data}"
         end
+
+        failed
       ensure
         terminate
       end

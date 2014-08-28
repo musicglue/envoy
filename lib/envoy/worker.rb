@@ -20,6 +20,7 @@ module Envoy
       @message = message
       @topic = @message.notification_topic
       @timer = every(5) { publish(@topic, :heartbeat) }
+      @log_data = log_data
     end
 
     def complete
@@ -48,19 +49,19 @@ module Envoy
     def safely
       return unless block_given?
 
-      info "at=worker_start #{log_data}"
+      info "at=worker_start #{@log_data}"
 
       begin
         start_time = Time.now
         yield
         end_time = Time.now
 
-        info "at=worker_end duration=#{(end_time - start_time).round}s #{log_data}"
+        info "at=worker_end duration=#{(end_time - start_time).round}s #{@log_data}"
 
         complete
       rescue => e
         Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
-          logger.error "at=worker_error error=#{e} #{log_data}"
+          logger.error "at=worker_error error=#{e} #{@log_data}"
         end
 
         failed

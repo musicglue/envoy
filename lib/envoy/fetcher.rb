@@ -22,7 +22,7 @@ module Envoy
     def run
       while @run
         fetch
-        sleep 1
+        sleep 0.1
       end
     end
 

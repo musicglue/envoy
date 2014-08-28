@@ -22,30 +22,32 @@ module Envoy
     def run
       while @run
         fetch
-        sleep(1)
+        sleep 1
       end
     end
 
     def stop
       @run = false
-      info "[#{@queue.queue_name}] Stopping..."
+      info "at=fetcher_stop #{log_data}"
       terminate
     end
 
     def fetch
-      debug "[#{@queue.queue_name}] Available slots: #{available_slots}"
+      debug "at=fetch free_slots=#{available_slots} #{log_data}"
       fetch_messages if available_slots?
     rescue => e
-      error "[#{@queue.queue_name}] #{e.inspect}"
-      error "[#{@queue.queue_name}] #{e.backtrace.join("\n")}"
+      Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
+        logger.error "at=fetcher_error error=#{e} #{log_data}"
+      end
     end
 
     def process(message)
       message = Envoy::SQS::Message.new(message, @queue, @fetcher_id)
-      if message.alive?
-        @currently_processing << message.id
-        @broker.process_message(message, @queue)
-      end
+
+      return unless message.alive?
+
+      @currently_processing << message.sqs_id
+      @broker.process_message(message, @queue)
     end
 
     def fetch_messages
@@ -64,6 +66,10 @@ module Envoy
 
     def available_slots?
       available_slots > 0
+    end
+
+    def log_data
+      "fetcher_id=#{@fetcher_id} queue=#{@queue.queue_name}"
     end
   end
 end

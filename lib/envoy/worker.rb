@@ -47,19 +47,32 @@ module Envoy
 
     def safely
       return unless block_given?
-      info "[#{@message.queue_name}] Processing #{@message.type} <#{@message.id}>"
+
+      info "at=worker_start #{log_data}"
+
       begin
+        start_time = Time.now
         yield
-        info "[#{@message.queue_name}] Finished Processing #{@message.type} <#{@message.id}>"
+        end_time = Time.now
+
         complete
+
+        info "at=worker_end duration=#{(end_time - start_time).round}s #{log_data}"
       rescue => e
-        Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
-          logger.error "[#{@message.queue_name}] #{e}"
-        end
         failed
+
+        Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
+          logger.error "at=worker_error error=#{e} #{log_data}"
+        end
       ensure
         terminate
       end
+    end
+
+    def log_data
+      "worker=#{self.class.name} queue=#{@message.queue_name} "\
+      "message_id=#{@message.id} message_type=#{@message_type} "\
+      "sqs_id=#{@message.sqs_id}"
     end
   end
 end

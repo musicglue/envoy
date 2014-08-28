@@ -10,7 +10,7 @@ module Envoy
 
       finalizer :finalize
 
-      attr_reader :id, :receipt, :header, :body
+      attr_reader :sqs_id, :receipt, :header, :body
       alias_method :headers, :header
 
       def initialize(packet, queue, fetcher_id)
@@ -19,7 +19,7 @@ module Envoy
         @timer        = after(INACTIVITY_TIMEOUT) { died }
         @received_at  = Time.now
         @receipt      = packet[:receipt_handle].strip
-        @id           = packet[:message_id].strip
+        @sqs_id       = packet[:message_id].strip
 
         message_body = JSON.parse(packet[:body])
 
@@ -41,7 +41,11 @@ module Envoy
       end
 
       def notification_topic
-        "message_#{id}"
+        "message_#{sqs_id}"
+      end
+
+      def id
+        @id ||= header[:id]
       end
 
       def type
@@ -55,29 +59,35 @@ module Envoy
 
       def complete
         @sqs.delete_message(@receipt)
+        debug "at=message_completed #{log_data}"
         terminate
       end
 
       def died
         Envoy.config.messages.died.call(self)
-        info 'Message has errored and will be retried'
+        info "at=message_died retry=true #{log_data}"
         terminate
       end
 
       def unprocessable
         Envoy.config.messages.unprocessable.call(self)
-        info 'Mark message as unprocessable and remove from queue'
         @sqs.delete_message(@receipt)
+        info "at=message_unprocessable retry=false #{log_data}"
         terminate
       end
 
       def finalize
-        Celluloid::Notifications.notifier.async.publish("free_#{@fetcher_id}", @id)
+        Celluloid::Notifications.notifier.async.publish("free_#{@fetcher_id}", @sqs_id)
         @timer.cancel
       end
 
       def handle_notification(_topic, payload)
         send(payload.to_sym) if respond_to? payload.to_sym
+      end
+
+      def log_data
+        "message_id=#{id} message_type=#{type} "\
+        "sqs_id=#{sqs_id}"
       end
     end
   end

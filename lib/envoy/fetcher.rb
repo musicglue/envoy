@@ -24,7 +24,7 @@ module Envoy
     def run
       while @run
         fetch
-        sleep 0.1
+        sleep(@last_fetch_was_empty ? 1 : 0.1)
       end
     end
 
@@ -53,7 +53,12 @@ module Envoy
     end
 
     def fetch_messages
-      @queue.pop(available_slots).each { |message| process(message) }
+      @last_fetch_was_empty = true
+
+      @queue.pop(available_slots).each do |message|
+        @last_fetch_was_empty = false
+        process(message)
+      end
     end
 
     def free_slot(_topic, uuid)

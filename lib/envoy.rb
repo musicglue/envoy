@@ -5,6 +5,7 @@ require 'celluloid'
 require 'uuid'
 require 'ostruct'
 require 'middleware'
+require 'newrelic_rpm'
 
 require 'envoy/queue_name'
 require 'envoy/sqs/message'

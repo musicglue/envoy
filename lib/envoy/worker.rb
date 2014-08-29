@@ -6,8 +6,11 @@ module Envoy
       include Celluloid
       include Celluloid::Logger
       include Celluloid::Notifications
+      include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
 
       attr_reader :message, :topic, :timer
+
+      add_transaction_tracer :safely_process, category: :task
     end
 
     module ClassMethods
@@ -34,6 +37,8 @@ module Envoy
     end
 
     def safely_process
+      NewRelic::Agent.set_transaction_name("Envoy/#{self.class.name.underscore}")
+
       safely do
         stack = ::Middleware::Builder.new
         (self.class.middleware + [Envoy::Middlewares::Worker]).each { |m| stack.use m, self }
@@ -55,7 +60,6 @@ module Envoy
         start_time = Time.now
         yield
         end_time = Time.now
-
         info "at=worker_end duration=#{(end_time - start_time).round}s #{@log_data}"
 
         complete

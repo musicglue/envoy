@@ -71,7 +71,7 @@ module Envoy
         info "at=message_unprocessable retry=false #{@log_data}"
         Envoy.config.messages.unprocessable.call(self)
         @sqs.delete_message(@receipt)
-        terminate
+        terminate if alive?
       end
 
       def finalize

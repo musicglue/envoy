@@ -10,10 +10,12 @@ module Envoy
     def initialize(concurrency, broker, queue)
       @currently_processing = Set.new
       @maximum_concurrently = concurrency
-      @broker               = broker
-      @run                  = true
-      @fetcher_id           = SecureRandom.hex(4)
-      @queue                = queue
+      @broker = broker
+      @run = true
+      @fetcher_id = SecureRandom.hex(4)
+      @queue = queue
+      @queue_name = queue.queue_name
+      @log_data = log_data
 
       link @broker
       subscribe "free_#{@fetcher_id}", :free_slot
@@ -28,16 +30,16 @@ module Envoy
 
     def stop
       @run = false
-      info "at=fetcher_stop #{log_data}"
+      info "at=fetcher_stop #{@log_data}"
       terminate
     end
 
     def fetch
-      debug "at=fetch free_slots=#{available_slots} #{log_data}"
+      debug "at=fetch free_slots=#{available_slots} #{@log_data}"
       fetch_messages if available_slots?
     rescue => e
       Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
-        logger.error "at=fetcher_error error=#{e} #{log_data}"
+        logger.error "at=fetcher_error error=#{e} #{@log_data}"
       end
     end
 
@@ -69,7 +71,7 @@ module Envoy
     end
 
     def log_data
-      "fetcher_id=#{@fetcher_id} queue=#{@queue.queue_name}"
+      "fetcher_id=#{@fetcher_id} queue=#{@queue_name}"
     end
   end
 end

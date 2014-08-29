@@ -24,8 +24,7 @@ module Envoy
       workflow_class = queue_mappings[message.type] || queue_mappings[:'*']
       workflow_class = workflow_class.constantize if workflow_class.is_a? String
 
-      log_data = "queue=#{queue.queue_name} message_id=#{message.id} "\
-                 "message_type=#{message.type} sqs_id=#{message.sqs_id}"
+      log_data = "queue=#{queue.queue_name} #{message.log_data}"
 
       if workflow_class
         debug "at=broker worker=#{workflow_class.name} #{log_data}"

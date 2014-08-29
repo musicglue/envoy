@@ -10,46 +10,44 @@ module Envoy
 
       finalizer :finalize
 
-      attr_reader :sqs_id, :receipt, :header, :body
+      attr_reader :sqs_id, :receipt, :queue_name, :notification_topic,
+                  :header, :body, :id, :type, :log_data
+
       alias_method :headers, :header
 
       def initialize(packet, queue, fetcher_id)
-        @fetcher_id   = fetcher_id
-        @sqs          = queue
-        @timer        = after(INACTIVITY_TIMEOUT) { died }
-        @received_at  = Time.now
-        @receipt      = packet[:receipt_handle].strip
-        @sqs_id       = packet[:message_id].strip
+        @fetcher_id = fetcher_id
+        @sqs = queue
+        @queue_name = queue.queue_name
+        @timer = after(INACTIVITY_TIMEOUT) { died }
+        @received_at = Time.now
+        @receipt = packet[:receipt_handle].strip
+        @sqs_id = packet[:message_id].strip
+        @notification_topic = "message_#{@sqs_id}"
 
         message_body = JSON.parse(packet[:body])
 
-        @header   = message_body['header'].with_indifferent_access
-        @body     = message_body['body'].with_indifferent_access
-        @notifer  = subscribe(notification_topic, :handle_notification)
+        @header = message_body['header'].with_indifferent_access
+        @body = message_body['body'].with_indifferent_access
+
+        @id = @header[:id]
+        @type = @header[:type].underscore.to_sym
+        @log_data = "message_id=#{@id} message_type=#{@type} sqs_id=#{@sqs_id}"
+
+        @notifer = subscribe(@notification_topic, :handle_notification)
 
         fail InvalidMessageFormatError unless @header && @body
       rescue => e
-        error e.inspect
+        Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
+          logger.error "at=message_initialization error=#{e} #{@log_data}"
+        end
+
         @header ||= { type: 'message' }.with_indifferent_access
-        @body   ||= {}
+        @body ||= {}
+
         unprocessable
+
         return nil
-      end
-
-      def queue_name
-        @sqs.queue_name
-      end
-
-      def notification_topic
-        "message_#{sqs_id}"
-      end
-
-      def id
-        @id ||= header[:id]
-      end
-
-      def type
-        @type ||= header[:type].underscore.to_sym
       end
 
       def heartbeat
@@ -58,19 +56,19 @@ module Envoy
       end
 
       def complete
-        debug "at=message_completed #{log_data}"
+        debug "at=message_completed #{@log_data}"
         @sqs.delete_message(@receipt)
         terminate
       end
 
       def died
-        info "at=message_died retry=true #{log_data}"
+        info "at=message_died retry=true #{@log_data}"
         Envoy.config.messages.died.call(self)
         terminate
       end
 
       def unprocessable
-        info "at=message_unprocessable retry=false #{log_data}"
+        info "at=message_unprocessable retry=false #{@log_data}"
         Envoy.config.messages.unprocessable.call(self)
         @sqs.delete_message(@receipt)
         terminate
@@ -83,11 +81,6 @@ module Envoy
 
       def handle_notification(_topic, payload)
         send(payload.to_sym) if respond_to? payload.to_sym
-      end
-
-      def log_data
-        "message_id=#{id} message_type=#{type} "\
-        "sqs_id=#{sqs_id}"
       end
     end
   end

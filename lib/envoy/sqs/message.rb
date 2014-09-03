@@ -50,6 +50,10 @@ module Envoy
         return nil
       end
 
+      def to_h
+        message_body.with_indifferent_access
+      end
+
       def heartbeat
         @sqs.extend_invisibility(@receipt, (INACTIVITY_TIMEOUT * 2))
         @timer.reset

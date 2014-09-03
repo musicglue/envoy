@@ -16,6 +16,7 @@ require 'envoy/dispatcher'
 require 'envoy/fetcher'
 require 'envoy/queue_directory'
 require 'envoy/middlewares/worker'
+require 'envoy/logging'
 
 require 'envoy/worker'
 require 'envoy/railtie' if defined? Rails

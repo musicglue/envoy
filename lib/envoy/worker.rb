@@ -65,7 +65,7 @@ module Envoy
         complete
       rescue => e
         Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
-          logger.error "at=worker_error error=#{e} #{@log_data}"
+          logger.error %(at=worker_error error="#{Envoy::Logging.escape(e)}" #{@log_data})
         end
 
         failed

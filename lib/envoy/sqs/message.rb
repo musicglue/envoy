@@ -39,7 +39,7 @@ module Envoy
         fail InvalidMessageFormatError unless @header && @body
       rescue => e
         Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
-          logger.error %(at=message_initialization error="#{Envoy::Logging.escape(e)}" #{@log_data})
+          logger.error %(at=message_initialization error="#{Envoy::Logging.escape(e.to_s)}" #{@log_data})
         end
 
         @header ||= { type: 'message' }.with_indifferent_access

@@ -39,7 +39,7 @@ module Envoy
       fetch_messages if available_slots?
     rescue => e
       Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
-        logger.error %(at=fetcher_error error="#{Envoy::Logging.escape(e)}" #{@log_data})
+        logger.error %(at=fetcher_error error="#{Envoy::Logging.escape(e.to_s)}" #{@log_data})
       end
     end
 

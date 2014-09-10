@@ -44,12 +44,12 @@ describe Envoy::SQS::Queue, :vcr do
 
       it 'extends the timeout' do
         described_class.extend_invisibility(messages.first.receipt_handle, 30)
-        described_class.pop(10).map { |x| x.receipt_handle }.wont_include(messages.first.receipt_handle)
+        described_class.pop(10).map(&:receipt_handle).wont_include(messages.first.receipt_handle)
       end
 
       it 'deletes the message' do
         described_class.delete_message(messages.first.receipt_handle)
-        described_class.pop(10).map { |x| x.receipt_handle }.wont_include(messages.first.receipt_handle)
+        described_class.pop(10).map(&:receipt_handle).wont_include(messages.first.receipt_handle)
       end
     end
 

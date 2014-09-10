@@ -29,7 +29,7 @@ module Envoy
 
   def shutdown!
     return unless @started
-    fetchers.each { |x| x.stop }
+    fetchers.each(&:stop)
     config.client_actors.each { |x| x.respond_to?(:stop) ? x.stop : x.terminate }
     Celluloid.shutdown
   end

@@ -25,10 +25,10 @@ module Envoy
         @sqs_id = packet[:message_id].strip
         @notification_topic = "message_#{@sqs_id}"
 
-        message_body = JSON.parse(packet[:body])
+        @sqs_message_body = JSON.parse(packet[:body]).with_indifferent_access
 
-        @header = message_body['header'].with_indifferent_access
-        @body = message_body['body'].with_indifferent_access
+        @header = @sqs_message_body['header']
+        @body = @sqs_message_body['body']
 
         @id = @header[:id]
         @type = @header[:type].underscore.to_sym
@@ -44,6 +44,7 @@ module Envoy
 
         @header ||= { type: 'message' }.with_indifferent_access
         @body ||= {}
+        @sqs_message_body = { header: @header, body: @body }.with_indifferent_access
 
         unprocessable
 
@@ -51,7 +52,7 @@ module Envoy
       end
 
       def to_h
-        message_body.with_indifferent_access
+        @sqs_message_body
       end
 
       def heartbeat

@@ -45,7 +45,7 @@ module Envoy
         error: error.to_s,
         backtrace: format_backtrace(error.backtrace)) if error
 
-      string = "at=#{level} #{data} #{error}".strip
+      string = "level=#{level} #{data} #{error}".strip
 
       Celluloid.logger.send(level, string) if Celluloid.logger
     end

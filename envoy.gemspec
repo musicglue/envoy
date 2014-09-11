@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'timers', '>= 4.0.1'
   spec.add_runtime_dependency 'uuid', '~> 2.3'
 
+  spec.add_development_dependency "awesome_print"
   spec.add_development_dependency "guard"
   spec.add_development_dependency "guard-minitest"
   spec.add_development_dependency "guard-rubocop"

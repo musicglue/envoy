@@ -12,6 +12,7 @@ Bundler.require(:default, :test)
 Celluloid.start
 Celluloid.logger = nil
 
+require 'awesome_print'
 require 'minitest/autorun'
 require 'webmock/minitest'
 require 'minispec-metadata'

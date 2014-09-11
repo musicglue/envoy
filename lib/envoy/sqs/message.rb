@@ -5,13 +5,13 @@ module Envoy
 
       INACTIVITY_TIMEOUT = 10
       include Celluloid
-      include Celluloid::Logger
       include Celluloid::Notifications
+      include Envoy::Logging
 
       finalizer :finalize
 
       attr_reader :sqs_id, :receipt, :queue_name, :notification_topic,
-                  :header, :body, :id, :type, :log_data
+                  :header, :body, :id, :type
 
       alias_method :headers, :header
 
@@ -32,15 +32,13 @@ module Envoy
 
         @id = @header[:id]
         @type = @header[:type].underscore.to_sym
-        @log_data = "message_id=#{@id} message_type=#{@type} sqs_id=#{@sqs_id}"
+        log_data
 
         @notifer = subscribe(@notification_topic, :handle_notification)
 
         fail InvalidMessageFormatError unless @header && @body
       rescue => e
-        Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
-          logger.error %(at=message_initialization error="#{Envoy::Logging.escape(e.to_s)}" #{@log_data})
-        end
+        error log_data.merge(at: 'initialize'), e
 
         @header ||= { type: 'message' }.with_indifferent_access
         @body ||= {}
@@ -51,6 +49,53 @@ module Envoy
         return nil
       end
 
+      def complete
+        debug log_data.merge(at: 'complete')
+        @sqs.delete_message(@receipt)
+        terminate
+      end
+
+      def died
+        info log_data.merge(at: 'died', 'retry' => true)
+        Envoy.config.messages.died.call(self)
+        terminate
+      end
+
+      def finalize
+        @timer.cancel
+        publish_to_fetcher @sqs_id
+      end
+
+      def handle_notification(_, payload)
+        method = payload.to_sym
+        return unless respond_to? method
+        send method
+      end
+
+      def log_data
+        @log_data ||= {
+          component: 'message',
+          message_id: @id,
+          message_type: @type,
+          sqs_id: @sqs_id,
+          fetcher_id: @fetcher_id
+        }
+      end
+
+      def unprocessable
+        info log_data.merge(at: 'unprocessable', 'retry' => false)
+        Envoy.config.messages.unprocessable.call(self)
+        @sqs.delete_message(@receipt)
+        terminate if Thread.current[:celluloid_actor].mailbox.alive?
+      end
+
+      def publish_to_fetcher *args
+        notifier = Celluloid::Notifications.notifier
+        notifier.async.publish "free_#{@fetcher_id}", *args
+      rescue Celluloid::DeadActorError => e
+        warn log_data.merge(at: 'publish_to_fetcher', args: args.inspect), e
+      end
+
       def to_h
         @sqs_message_body
       end
@@ -58,34 +103,6 @@ module Envoy
       def heartbeat
         @sqs.extend_invisibility(@receipt, (INACTIVITY_TIMEOUT * 2))
         @timer.reset
-      end
-
-      def complete
-        debug "at=message_completed #{@log_data}"
-        @sqs.delete_message(@receipt)
-        terminate
-      end
-
-      def died
-        info "at=message_died retry=true #{@log_data}"
-        Envoy.config.messages.died.call(self)
-        terminate
-      end
-
-      def unprocessable
-        info "at=message_unprocessable retry=false #{@log_data}"
-        Envoy.config.messages.unprocessable.call(self)
-        @sqs.delete_message(@receipt)
-        terminate if Thread.current[:celluloid_actor].mailbox.alive?
-      end
-
-      def finalize
-        Celluloid::Notifications.notifier.async.publish("free_#{@fetcher_id}", @sqs_id)
-        @timer.cancel
-      end
-
-      def handle_notification(_topic, payload)
-        send(payload.to_sym) if respond_to? payload.to_sym
       end
     end
   end

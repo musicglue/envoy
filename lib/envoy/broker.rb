@@ -1,7 +1,7 @@
 module Envoy
   class Broker
     include Celluloid
-    include Celluloid::Logger
+    include Envoy::Logging
 
     def dispatcher
       @dispatcher ||= Celluloid::Actor[:dispatcher_pool]
@@ -24,20 +24,17 @@ module Envoy
       workflow_class = queue_mappings[message.type] || queue_mappings[:'*']
       workflow_class = workflow_class.constantize if workflow_class.is_a? String
 
-      log_data = "queue=#{queue.queue_name} #{message.log_data}"
+      log_data = message.log_data.merge(component: 'broker', at: 'process_message', queue: queue.queue_name)
 
       if workflow_class
-        debug "at=broker worker=#{workflow_class.name} #{log_data}"
+        debug log_data.merge(worker: workflow_class.name)
         dispatcher.async.process(workflow_class, message)
       else
-        debug "at=broker worker=nil #{log_data}"
+        debug log_data.merge(worker: nil)
         message.unprocessable
       end
     rescue => e
-      Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
-        logger.error %(at=broker_error error="#{Envoy::Logging.escape(e.to_s)}" #{log_data})
-      end
-
+      error log_data, e
     end
   end
 end

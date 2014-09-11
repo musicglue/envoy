@@ -4,8 +4,8 @@ module Envoy
 
     included do
       include Celluloid
-      include Celluloid::Logger
       include Celluloid::Notifications
+      include Envoy::Logging
       include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
 
       attr_reader :message, :topic, :timer
@@ -22,18 +22,18 @@ module Envoy
     def initialize(message)
       @message = message
       @topic = @message.notification_topic
-      @timer = every(5) { publish(@topic, :heartbeat) }
-      @log_data = log_data
+      @timer = every(5) { heartbeat }
+      log_data
     end
 
     def complete
       @timer.cancel
-      publish(@topic, :complete)
+      publish_to_message :complete
     end
 
     def failed
       @timer.cancel
-      publish(@topic, :died)
+      publish_to_message :died
     end
 
     def safely_process
@@ -47,37 +47,49 @@ module Envoy
     end
 
     def process
-      # noop
       fail NotImplemetedError
     end
 
     def safely
       return unless block_given?
 
-      info "at=worker_start #{@log_data}"
+      info log_data.merge(at: 'before_process')
 
       begin
         start_time = Time.now
         yield
         end_time = Time.now
-        info "at=worker_end duration=#{(end_time - start_time).round}s #{@log_data}"
 
+        info log_data.merge(at: 'after_process', duration: "#{(end_time - start_time).round}s")
         complete
       rescue => e
-        Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
-          logger.error %(at=worker_error error="#{Envoy::Logging.escape(e.to_s)}" #{@log_data})
-        end
-
+        error log_data.merge(at: 'safely'), e
         failed
       ensure
         terminate
       end
     end
 
+    def heartbeat
+      publish_to_message :heartbeat
+    end
+
     def log_data
-      "worker=#{self.class.name} queue=#{@message.queue_name} "\
-      "message_id=#{@message.id} message_type=#{@message.type} "\
-      "sqs_id=#{@message.sqs_id}"
+      @log_data ||= {
+        component: 'worker',
+        worker: self.class.name,
+        queue: @message.queue_name,
+        message_id: @message.id,
+        message_type: @message.type,
+        sqs_id: @message.sqs_id,
+        topic: @topic
+      }
+    end
+
+    def publish_to_message *args
+      publish @topic, *args
+    rescue Celluloid::DeadActorError => e
+      warn log_data.merge(at: 'publish_to_message', args: args.inspect), e
     end
   end
 end

@@ -7,6 +7,7 @@ require 'ostruct'
 require 'middleware'
 require 'newrelic_rpm'
 
+require 'envoy/logging'
 require 'envoy/queue_name'
 require 'envoy/sqs/message'
 require 'envoy/sqs/queue'
@@ -23,7 +24,7 @@ require 'envoy/worker'
 require 'envoy/railtie' if defined? Rails
 
 module Envoy
-  VERSION = '1.0.1'
+  VERSION = '1.0.2'
   ROOT_PATH = File.dirname(File.dirname(__FILE__))
 
   module_function

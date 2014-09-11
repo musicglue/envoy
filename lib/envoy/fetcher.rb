@@ -2,8 +2,8 @@ require 'securerandom'
 module Envoy
   class Fetcher
     include Celluloid
-    include Celluloid::Logger
     include Celluloid::Notifications
+    include Envoy::Logging
 
     attr_reader :currently_processing
 
@@ -15,7 +15,7 @@ module Envoy
       @fetcher_id = SecureRandom.hex(4)
       @queue = queue
       @queue_name = queue.queue_name
-      @log_data = log_data
+      log_data
 
       link @broker
       subscribe "free_#{@fetcher_id}", :free_slot
@@ -24,23 +24,21 @@ module Envoy
     def run
       while @run
         fetch
-        sleep(@last_fetch_was_empty ? 1 : 0.1)
+        sleep sleep_time
       end
     end
 
     def stop
       @run = false
-      info "at=fetcher_stop #{@log_data}"
+      info log_data.merge(at: 'stop')
       terminate
     end
 
     def fetch
-      debug "at=fetch free_slots=#{available_slots} #{@log_data}"
+      debug log_data.merge(at: 'fetch', free_slots: available_slots)
       fetch_messages if available_slots?
     rescue => e
-      Celluloid::Logger.with_backtrace(e.backtrace) do |logger|
-        logger.error %(at=fetcher_error error="#{Envoy::Logging.escape(e.to_s)}" #{@log_data})
-      end
+      error log_data.merge(at: 'fetch'), e
     end
 
     def process(message)
@@ -61,8 +59,16 @@ module Envoy
       end
     end
 
-    def free_slot(_topic, uuid)
+    def free_slot(_, uuid)
       @currently_processing.delete(uuid)
+    end
+
+    def log_data
+      @log_data ||= {
+        component: 'fetcher',
+        fetcher_id: @fetcher_id,
+        queue: @queue_name
+      }
     end
 
     private
@@ -75,8 +81,8 @@ module Envoy
       available_slots > 0
     end
 
-    def log_data
-      "fetcher_id=#{@fetcher_id} queue=#{@queue_name}"
+    def sleep_time
+      @last_fetch_was_empty ? 1 : 0.1
     end
   end
 end

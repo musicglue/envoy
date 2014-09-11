@@ -25,8 +25,8 @@ describe Envoy::Broker do
       }
     }
 
-    @message_1 = OpenStruct.new type: :message_1
-    @message_2 = OpenStruct.new type: :message_2
+    @message_1 = OpenStruct.new type: :message_1, log_data: {}
+    @message_2 = OpenStruct.new type: :message_2, log_data: {}
 
     @queue_1 = MockQueue.new 'queue_1'
     @queue_2 = MockQueue.new 'queue_2'

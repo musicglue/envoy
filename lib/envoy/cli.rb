@@ -83,7 +83,7 @@ module Envoy
     end
 
     def print_banner
-      Celluloid.logger.info "Starting Envoy under #{Envoy.env} environment: v#{Envoy::VERSION} (Multicellular Organism)"
+      Celluloid.logger.info "Starting Envoy under #{Envoy.env} environment: v#{Envoy::VERSION} (Nematode Worm)"
     end
 
     def handle_signal(signal)

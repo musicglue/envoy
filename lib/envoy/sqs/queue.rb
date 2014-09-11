@@ -1,8 +1,6 @@
 module Envoy
   module SQS
     class Queue
-      include Celluloid::Logger
-
       attr_reader :queue_name
 
       def initialize(queue_name, options = {})

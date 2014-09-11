@@ -30,19 +30,42 @@ module Envoy
 
   def shutdown!
     return unless @started
-    fetchers.each(&:stop)
-    config.client_actors.each { |x| x.respond_to?(:stop) ? x.stop : x.terminate }
+
+    config.client_actors.each do |supervisor|
+      supervisor.actors.each do |actor|
+        actor.respond_to?(:stop) ? actor.stop : actor.terminate
+      end
+    end
+
+    fetchers.each do |supervisor|
+      supervisor.actors.each &:stop
+    end
+
     Celluloid.shutdown
   end
 
   def start!
     return if @started
+
     require 'envoy/application'
+
     Celluloid.start
     Envoy::Application.run!
-    fetchers.each { |x| x.async.run }
-    config.client_actors.map!(&:new)
-    config.client_actors.each { |x| x.async.run }
+
+    fetchers.each do |supervisor|
+      supervisor.actors.each do |actor|
+        actor.async.run
+      end
+    end
+
+    config.client_actors.map! &:supervise
+
+    config.client_actors.each do |supervisor|
+      supervisor.actors.each do |actor|
+        actor.async.run
+      end
+    end
+
     @started = true
   end
 
@@ -69,7 +92,9 @@ module Envoy
   end
 
   def fetchers
-    @fetchers ||= config.queues.map { |queue| Fetcher.new(split_concurrency, broker, queue) }
+    @fetchers ||= config.queues.map do |queue|
+      Fetcher.supervise config.concurrency, broker, queue
+    end
   end
 
   def broker
@@ -95,9 +120,5 @@ module Envoy
 
   def pool_count
     config.queues.count < 2 ? 2 : config.queues.count
-  end
-
-  def split_concurrency
-    config.concurrency
   end
 end

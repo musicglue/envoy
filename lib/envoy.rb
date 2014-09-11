@@ -11,6 +11,7 @@ require 'envoy/queue_name'
 require 'envoy/sqs/message'
 require 'envoy/sqs/queue'
 
+require 'envoy/broker/map'
 require 'envoy/broker'
 require 'envoy/dispatcher'
 require 'envoy/fetcher'

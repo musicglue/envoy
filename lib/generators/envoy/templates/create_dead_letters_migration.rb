@@ -1,4 +1,4 @@
-class CreateDeadLetters < ActiveRecord::Migration
+class EnvoyCreateDeadLetters < ActiveRecord::Migration
   def change
     create_table :dead_letters, id: :uuid do |t|
       t.timestamps

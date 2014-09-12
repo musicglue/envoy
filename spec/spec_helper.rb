@@ -28,6 +28,12 @@ require_relative 'support/mock_dispatcher'
 require_relative 'support/worker'
 require_relative 'support/broken_worker'
 
+# If VCR cassettes stop working because of an aws-sdk-core gem update, you'll need to:
+#
+# - fire up cmb
+# - create a new account and paste the access + secret keys into the config below
+# - create a test-queue-test
+
 VCR.configure do |config|
   config.cassette_library_dir = 'spec/fixtures/cassettes'
   config.hook_into :webmock
@@ -38,8 +44,10 @@ MinitestVcr::Spec.configure!
 class StubSocket; attr_accessor :continue_timeout end
 
 Envoy.configure do |config|
-  config.aws.credentials = {  access_key_id: '6AADEZ8OTKNF30O7SU96',
-                              secret_access_key: 'siRiBWXfYknZ/JZLYwy2KwWKpc4/u99vXWEv3y7F' }
+  config.aws.credentials = {
+    access_key_id: 'A0O8YNPWVQ81JJNXI8Q7',
+    secret_access_key: 'Q+goNGK6Op7RtYuyDWIZWYmGWp/WVztczg4VeY+F'
+  }
   config.queue = MockQueue
 end
 

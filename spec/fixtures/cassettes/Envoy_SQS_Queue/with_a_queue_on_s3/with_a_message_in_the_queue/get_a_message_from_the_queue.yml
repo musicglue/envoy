@@ -12,17 +12,17 @@ http_interactions:
       Accept-Encoding:
       - ''
       User-Agent:
-      - aws-sdk-ruby2/2.0.0.rc10 ruby/2.1.2 x86_64-darwin13.0 Seahorse/0.1.0
+      - aws-sdk-ruby2/2.0.0.rc16 ruby/2.1.2 x86_64-darwin13.0
       X-Amz-Date:
-      - 20140708T130600Z
+      - 20140912T110452Z
       Host:
       - localhost
       X-Amz-Content-Sha256:
       - 217957fecf3e8ae86d02d651d7d4313b4f1b5074caa754af2294b153cac7d34d
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=6AADEZ8OTKNF30O7SU96/20140708/eu-west-1/sqs/aws4_request,
+      - AWS4-HMAC-SHA256 Credential=A0O8YNPWVQ81JJNXI8Q7/20140912/eu-west-1/sqs/aws4_request,
         SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
-        Signature=08597e04d61a83d13ce6e703be364682d80823eb93894f519d0ac1c17ce90909
+        Signature=0fecff35ace0b3726306dffbb3e0a01a35d6f364a499d932d3471f234438cd59
       Content-Length:
       - '63'
       Accept:
@@ -40,32 +40,32 @@ http_interactions:
       - Jetty(8.1.10.v20130312)
     body:
       encoding: UTF-8
-      string: "<GetQueueUrlResponse>\n\t<GetQueueUrlResult>\n\t\t<QueueUrl>http://eu-west-1.localhost:6059/397471395665/test-queue-test</QueueUrl>\n\t</GetQueueUrlResult>\n\t<ResponseMetadata><RequestId>84c28c6e-475b-4042-ab66-d5fc84b2d899</RequestId></ResponseMetadata>\n</GetQueueUrlResponse>\n"
+      string: "<GetQueueUrlResponse>\n\t<GetQueueUrlResult>\n\t\t<QueueUrl>http://eu-west-1.localhost:6059/410519870668/test-queue-test</QueueUrl>\n\t</GetQueueUrlResult>\n\t<ResponseMetadata><RequestId>8580f167-d03e-4983-b660-afe93a920a29</RequestId></ResponseMetadata>\n</GetQueueUrlResponse>\n"
     http_version: 
-  recorded_at: Tue, 08 Jul 2014 13:06:00 GMT
+  recorded_at: Fri, 12 Sep 2014 11:04:52 GMT
 - request:
     method: post
-    uri: http://eu-west-1.localhost:6059/397471395665/test-queue-test
+    uri: http://eu-west-1.localhost:6059/410519870668/test-queue-test
     body:
       encoding: UTF-8
-      string: Action=SendMessage&MessageBody=%7B%22header%22%3A%7B%22type%22%3A%22generate_zip_file%22%7D%2C%22body%22%3A%7B%22files%22%3A%5B%7B%22bucket%22%3A%22aws-test-bucket%22%2C%22path%22%3A%22test-path.jpg%22%7D%5D%2C%22destination%22%3A%7B%22bucket%22%3A%22aws-test-bucket%22%2C%22path%22%3A%22final-asset.zip%22%7D%7D%7D&QueueUrl=http%3A%2F%2Feu-west-1.localhost%3A6059%2F397471395665%2Ftest-queue-test&Version=2012-11-05
+      string: Action=SendMessage&MessageBody=%7B%22header%22%3A%7B%22type%22%3A%22generate_zip_file%22%7D%2C%22body%22%3A%7B%22files%22%3A%5B%7B%22bucket%22%3A%22aws-test-bucket%22%2C%22path%22%3A%22test-path.jpg%22%7D%5D%2C%22destination%22%3A%7B%22bucket%22%3A%22aws-test-bucket%22%2C%22path%22%3A%22final-asset.zip%22%7D%7D%7D&QueueUrl=http%3A%2F%2Feu-west-1.localhost%3A6059%2F410519870668%2Ftest-queue-test&Version=2012-11-05
     headers:
       Content-Type:
       - application/x-www-form-urlencoded; charset=utf-8
       Accept-Encoding:
       - ''
       User-Agent:
-      - aws-sdk-ruby2/2.0.0.rc10 ruby/2.1.2 x86_64-darwin13.0 Seahorse/0.1.0
+      - aws-sdk-ruby2/2.0.0.rc16 ruby/2.1.2 x86_64-darwin13.0
       X-Amz-Date:
-      - 20140708T130600Z
+      - 20140912T110452Z
       Host:
       - eu-west-1.localhost
       X-Amz-Content-Sha256:
-      - 9d7a9e8658185c355893ecccc437caafc99ed92e8fb6a11ce7dec677e4f39115
+      - b431ce35533b0cff7e8cef954cc707c4ba9cddcbddea2958643227ce6b9795ed
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=6AADEZ8OTKNF30O7SU96/20140708/localhost:6059/397471395665/test-queue-test/sqs/aws4_request,
+      - AWS4-HMAC-SHA256 Credential=A0O8YNPWVQ81JJNXI8Q7/20140912/localhost:6059/410519870668/test-queue-test/sqs/aws4_request,
         SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
-        Signature=bee031da754e3001d7fd4bc98c1fcbade38e9c544ac3830a8f8d5de5eb816572
+        Signature=9ad1bdc751ec7074eb9909bea441c379edf4a4381c4555873b3d9b14d8e856ae
       Content-Length:
       - '416'
       Accept:
@@ -83,32 +83,32 @@ http_interactions:
       - Jetty(8.1.10.v20130312)
     body:
       encoding: UTF-8
-      string: "<SendMessageResponse>\n\t<SendMessageResult>\n\t\t<MD5OfMessageBody>938fb1189d8e21f400fc61f749324dda</MD5OfMessageBody>\n\t\t<MessageId>1404824760060:0:e0ff04f8ca2a1b22887669e932a02969_0_35:2946131055209349130:-7593710027004277561</MessageId>\n\t</SendMessageResult>\n\t<ResponseMetadata><RequestId>f658bc77-ec98-4de6-8a29-1fbb8334ea71</RequestId></ResponseMetadata>\n</SendMessageResponse>\n"
+      string: "<SendMessageResponse>\n\t<SendMessageResult>\n\t\t<MD5OfMessageBody>938fb1189d8e21f400fc61f749324dda</MD5OfMessageBody>\n\t\t<MessageId>1410519892292:0:000f28209348f2dd291a0543ece933f1_0_92:2958074613155758141:-6129477198155124233</MessageId>\n\t</SendMessageResult>\n\t<ResponseMetadata><RequestId>c4cd5e11-7475-4e42-9f00-248065634d4e</RequestId></ResponseMetadata>\n</SendMessageResponse>\n"
     http_version: 
-  recorded_at: Tue, 08 Jul 2014 13:06:00 GMT
+  recorded_at: Fri, 12 Sep 2014 11:04:52 GMT
 - request:
     method: post
-    uri: http://eu-west-1.localhost:6059/397471395665/test-queue-test
+    uri: http://eu-west-1.localhost:6059/410519870668/test-queue-test
     body:
       encoding: UTF-8
-      string: Action=ReceiveMessage&MaxNumberOfMessages=1&QueueUrl=http%3A%2F%2Feu-west-1.localhost%3A6059%2F397471395665%2Ftest-queue-test&Version=2012-11-05
+      string: Action=ReceiveMessage&MaxNumberOfMessages=1&QueueUrl=http%3A%2F%2Feu-west-1.localhost%3A6059%2F410519870668%2Ftest-queue-test&Version=2012-11-05
     headers:
       Content-Type:
       - application/x-www-form-urlencoded; charset=utf-8
       Accept-Encoding:
       - ''
       User-Agent:
-      - aws-sdk-ruby2/2.0.0.rc10 ruby/2.1.2 x86_64-darwin13.0 Seahorse/0.1.0
+      - aws-sdk-ruby2/2.0.0.rc16 ruby/2.1.2 x86_64-darwin13.0
       X-Amz-Date:
-      - 20140708T130600Z
+      - 20140912T110452Z
       Host:
       - eu-west-1.localhost
       X-Amz-Content-Sha256:
-      - 79ac04f60f82b7b9d92bb5f8ed0136e5503679fa9b2dc44281331263e0f18536
+      - c2e012032c4af4ff909ecefd3b6afd413e6cfee2b44bb2bc0f1244e2afa166be
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=6AADEZ8OTKNF30O7SU96/20140708/localhost:6059/397471395665/test-queue-test/sqs/aws4_request,
+      - AWS4-HMAC-SHA256 Credential=A0O8YNPWVQ81JJNXI8Q7/20140912/localhost:6059/410519870668/test-queue-test/sqs/aws4_request,
         SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
-        Signature=bb700e2cbf9993f4bdbddd58c038a464991fb77f203823537478885a446853e6
+        Signature=120c3aa3b10d2cf7b28b0eca0f0a8346730f69b904291c08e2a5fb1905174685
       Content-Length:
       - '144'
       Accept:
@@ -126,7 +126,7 @@ http_interactions:
       - Jetty(8.1.10.v20130312)
     body:
       encoding: UTF-8
-      string: "<ReceiveMessageResponse>\n\t<ReceiveMessageResult>\n\t\t<Message>\n\t\t\t<MessageId>1404824760060:0:e0ff04f8ca2a1b22887669e932a02969_0_35:2946131055209349130:-7593710027004277561</MessageId>\n\t\t\t<ReceiptHandle>1404824760060:0:e0ff04f8ca2a1b22887669e932a02969_0_35:2946131055209349130:-7593710027004277561</ReceiptHandle>\n\t\t\t<MD5OfBody>938fb1189d8e21f400fc61f749324dda</MD5OfBody>\n\t\t\t<Body>{&quot;header&quot;:{&quot;type&quot;:&quot;generate_zip_file&quot;},&quot;body&quot;:{&quot;files&quot;:[{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;test-path.jpg&quot;}],&quot;destination&quot;:{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;final-asset.zip&quot;}}}</Body>\n\t\t\t<Attribute><Name>ApproximateReceiveCount</Name><Value>1</Value></Attribute>\n\t\t\t<Attribute><Name>SentTimestamp</Name><Value>1404824760060</Value></Attribute>\n\t\t\t<Attribute><Name>SenderId</Name><Value>397471395665</Value></Attribute>\n\t\t\t<Attribute><Name>ApproximateFirstReceiveTimestamp</Name><Value>1404824760069</Value></Attribute>\n\t\t</Message>\n\t</ReceiveMessageResult>\n\t<ResponseMetadata><RequestId>cc0f9656-e344-4417-aeae-6cbb4bc3ec00</RequestId></ResponseMetadata>\n</ReceiveMessageResponse>\n"
+      string: "<ReceiveMessageResponse>\n\t<ReceiveMessageResult>\n\t\t<Message>\n\t\t\t<MessageId>1410519892292:0:000f28209348f2dd291a0543ece933f1_0_92:2958074613155758141:-6129477198155124233</MessageId>\n\t\t\t<ReceiptHandle>1410519892292:0:000f28209348f2dd291a0543ece933f1_0_92:2958074613155758141:-6129477198155124233</ReceiptHandle>\n\t\t\t<MD5OfBody>938fb1189d8e21f400fc61f749324dda</MD5OfBody>\n\t\t\t<Body>{&quot;header&quot;:{&quot;type&quot;:&quot;generate_zip_file&quot;},&quot;body&quot;:{&quot;files&quot;:[{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;test-path.jpg&quot;}],&quot;destination&quot;:{&quot;bucket&quot;:&quot;aws-test-bucket&quot;,&quot;path&quot;:&quot;final-asset.zip&quot;}}}</Body>\n\t\t\t<Attribute><Name>ApproximateReceiveCount</Name><Value>1</Value></Attribute>\n\t\t\t<Attribute><Name>SentTimestamp</Name><Value>1410519892290</Value></Attribute>\n\t\t\t<Attribute><Name>SenderId</Name><Value>410519870668</Value></Attribute>\n\t\t\t<Attribute><Name>ApproximateFirstReceiveTimestamp</Name><Value>1410519892302</Value></Attribute>\n\t\t</Message>\n\t</ReceiveMessageResult>\n\t<ResponseMetadata><RequestId>4bde06d2-a0b6-4b7e-9e20-4a05c441c205</RequestId></ResponseMetadata>\n</ReceiveMessageResponse>\n"
     http_version: 
-  recorded_at: Tue, 08 Jul 2014 13:06:00 GMT
-recorded_with: VCR 2.9.2
+  recorded_at: Fri, 12 Sep 2014 11:04:52 GMT
+recorded_with: VCR 2.9.3

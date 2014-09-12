@@ -2,7 +2,7 @@ require 'rails/generators/named_base'
 require 'rails/generators/active_record/migration'
 
 module Envoy
-  class InitializerGenerator < Rails::Generators::Base
+  class InstallGenerator < Rails::Generators::Base
     include ActiveRecord::Generators::Migration
 
     desc 'Installs models and initializers for Envoy'

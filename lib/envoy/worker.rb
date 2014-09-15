@@ -36,6 +36,10 @@ module Envoy
       publish_to_message :died
     end
 
+    def logger
+      Envoy::Logging
+    end
+
     def safely_process
       NewRelic::Agent.set_transaction_name("Envoy/#{self.class.name.underscore}")
 

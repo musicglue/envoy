@@ -33,13 +33,13 @@ class MockQueue
 
   def package(message)
     OpenStruct.new(
-                     message_id:  UUID.generate,
+                     message_id:  SecureRandom.uuid,
                      body:        message.to_json,
                      md5_of_body: Digest::MD5.hexdigest(message.to_json),
                      md5_of_message_attributes: nil,
                      message_attributes: {},
                      attributes:  {
-                       'SenderId'      => UUID.generate,
+                       'SenderId'      => SecureRandom.uuid,
                        'SentTimestamp' =>  Time.now,
                        'ApproximateFirstReceiveTimestamp' => Time.now,
                        'ApproximateReceiveCount' => 1

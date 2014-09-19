@@ -1,8 +1,9 @@
 require 'bundler/gem_tasks'
 require 'rake/testtask'
 
-Rake::TestTask.new do |t|
+Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
-  t.libs << 'spec'
-  t.test_files = FileList['spec/**/*_spec.rb']
+  t.libs << 'test'
+  t.pattern = 'test/**/*_test.rb'
+  t.verbose = false
 end

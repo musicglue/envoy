@@ -42,7 +42,9 @@ module Envoy
     private
 
     def all_queues
-      @config.queues.map(&:name).flatten.uniq
+      @config.queues.map(&:name).flatten.uniq.map do |queue|
+        EnvironmentalName.new(queue).to_s
+      end
     end
 
     def all_topics

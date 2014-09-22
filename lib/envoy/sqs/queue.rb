@@ -10,7 +10,7 @@ module Envoy
         @queue_name = EnvironmentalName.new(config.name).to_s
 
         attrs = {}
-        attrs[:endpoint] = @config.sqs.endpoint unless @config.sqs.endpoint.blank?
+        attrs[:endpoint] = endpoint unless endpoint.blank?
 
         @sqs = Aws::SQS::Client.new attrs
       end

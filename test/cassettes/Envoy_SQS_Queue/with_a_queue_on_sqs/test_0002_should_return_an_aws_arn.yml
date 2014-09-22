@@ -1,0 +1,89 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://eu-west-1.localhost:6059/
+    body:
+      encoding: UTF-8
+      string: Action=GetQueueUrl&QueueName=test-queue-test&Version=2012-11-05
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.0.0.rc16 ruby/2.1.2 x86_64-darwin13.0
+      X-Amz-Date:
+      - 20140922T175017Z
+      Host:
+      - eu-west-1.localhost
+      X-Amz-Content-Sha256:
+      - 217957fecf3e8ae86d02d651d7d4313b4f1b5074caa754af2294b153cac7d34d
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=WE6BN6AWQLJ47G9Z540E/20140922/eu-west-1/sqs/aws4_request,
+        SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
+        Signature=6418b5027750ea3c061ce820be061785a1a9a580c6ed21e04815c2c0277c9e2b
+      Content-Length:
+      - '63'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '270'
+      Server:
+      - Jetty(8.1.10.v20130312)
+    body:
+      encoding: UTF-8
+      string: "<GetQueueUrlResponse>\n\t<GetQueueUrlResult>\n\t\t<QueueUrl>http://eu-west-1.localhost:6059/411404999819/test-queue-test</QueueUrl>\n\t</GetQueueUrlResult>\n\t<ResponseMetadata><RequestId>703b6d34-1241-40d3-bca0-81807d4e5bd0</RequestId></ResponseMetadata>\n</GetQueueUrlResponse>\n"
+    http_version: 
+  recorded_at: Mon, 22 Sep 2014 17:50:17 GMT
+- request:
+    method: post
+    uri: http://eu-west-1.localhost:6059/411404999819/test-queue-test
+    body:
+      encoding: UTF-8
+      string: Action=GetQueueAttributes&AttributeName.1=QueueArn&QueueUrl=http%3A%2F%2Feu-west-1.localhost%3A6059%2F411404999819%2Ftest-queue-test&Version=2012-11-05
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.0.0.rc16 ruby/2.1.2 x86_64-darwin13.0
+      X-Amz-Date:
+      - 20140922T175017Z
+      Host:
+      - eu-west-1.localhost
+      X-Amz-Content-Sha256:
+      - 900b8b6b38ad72ecfc13a51d193952e984cf8dcd867f88c21d168509d624abe0
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=WE6BN6AWQLJ47G9Z540E/20140922/localhost:6059/411404999819/test-queue-test/sqs/aws4_request,
+        SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
+        Signature=308496246c1d46fcfdbb15cc6d6591c130f051f4500679a6a98f75c0ca30bc71
+      Content-Length:
+      - '151'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '320'
+      Server:
+      - Jetty(8.1.10.v20130312)
+    body:
+      encoding: UTF-8
+      string: "<GetQueueAttributesResponse>\n\t<GetQueueAttributesResult>\n\t\t<Attribute><Name>QueueArn</Name><Value>arn:cmb:cqs:ccp:411404999819:test-queue-test</Value></Attribute>\n\t</GetQueueAttributesResult>\n\t<ResponseMetadata><RequestId>96b96230-0cfb-43c9-9fc3-97398dd01aa4</RequestId></ResponseMetadata>\n</GetQueueAttributesResponse>\n"
+    http_version: 
+  recorded_at: Mon, 22 Sep 2014 17:50:17 GMT
+recorded_with: VCR 2.9.3

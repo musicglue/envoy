@@ -1,12 +1,20 @@
 require_relative 'test_helper'
 
-describe Envoy::SQS::Queue, :vcr do
+describe Envoy::SQS::Queue do
   let(:queue_name) { 'test-queue' }
   let(:queue_config) { Envoy::Configuration::QueueConfiguration.new queue_name }
 
   describe 'with a queue on sqs' do
+    before do
+      VCR.insert_cassette self.class.name.vcr_path(self, name)
+    end
+
+    after do
+      VCR.eject_cassette
+    end
+
     let(:queue) do
-      Envoy::SQS::Queue.new(queue_config, 'http://localhost:6059')
+      Envoy::SQS::Queue.new(queue_config, 'http://eu-west-1.localhost:6059')
     end
 
     it 'should return an sqs object' do
@@ -27,7 +35,6 @@ describe Envoy::SQS::Queue, :vcr do
     end
 
     describe 'with a message in the queue' do
-
       let(:message_json) { SQS_MESSAGE_HASH.to_json }
       let(:messages)     { queue.pop(1) }
 
@@ -49,6 +56,5 @@ describe Envoy::SQS::Queue, :vcr do
         queue.pop(10).map(&:receipt_handle).wont_include(messages.first.receipt_handle)
       end
     end
-
   end
 end

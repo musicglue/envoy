@@ -20,6 +20,9 @@ require 'database_cleaner'
 require 'minitest/rg'
 require 'minitest/focus'
 require 'minitest-spec-rails'
+require 'pry-byebug'
+require 'vcr'
+require 'webmock'
 
 DatabaseCleaner.strategy = :truncation
 
@@ -31,6 +34,11 @@ class MiniTest::Spec
   after :each do
     DatabaseCleaner.clean
   end
+end
+
+VCR.configure do |c|
+  c.cassette_library_dir = 'test/cassettes'
+  c.hook_into :webmock
 end
 
 require_relative 'support/mock_queue'
@@ -56,12 +64,33 @@ Celluloid.start
 Celluloid.logger = Logger.new('/tmp/envoy-tests')
 
 Envoy.configure do |config|
-  config.aws.access_key = ENV['AWS_ACCESS_KEY']
-  config.aws.secret_key = ENV['AWS_SECRET_KEY']
+  config.aws.access_key = 'WE6BN6AWQLJ47G9Z540E'
+  config.aws.secret_key = 'LNsde4uYRA5eeV8e5RWAL0LRO1/vMmF2DXg94qMs'
   config.aws.region = 'eu-west-1'
-  config.aws.account_id = ENV['AWS_ACCOUNT_ID']
-  config.sns.endpoint = "http://#{config.aws.region}.localhost:6061"
+  config.aws.account_id = '411404999819'
+
+  config.sns.endpoint = "http://eu-west-1.localhost:6061"
   config.sns.protocol = 'cqs'
-  config.sqs.endpoint = "http://#{config.aws.region}.localhost:6059"
+  config.sqs.endpoint = "http://eu-west-1.localhost:6059"
   config.sqs.protocol = 'cqs'
+end
+
+class String
+  def vcr_path(example, spec_name)
+    self.scan(/^(.*?)::[#a-z]/) do |class_names|
+      class_name = class_names.flatten.first
+
+      if class_name.nil?
+        @path = example.class.name.prep
+      else
+        @path = example.class.name.gsub(class_name, "").prep.unshift(class_name)
+      end
+    end
+
+    @path.push(spec_name).join("/") unless @path.nil?
+  end
+
+  def prep
+    split("::").map {|e| e.sub(/[^\w]*$/, "")}.reject(&:empty?) - ["vcr"]
+  end
 end

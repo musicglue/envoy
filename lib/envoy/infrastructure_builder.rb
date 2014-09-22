@@ -9,7 +9,11 @@ module Envoy
     end
 
     def build_policies
+      puts "Application policy for the #{Rails.env} environment:"
+      puts ""
       puts application_policy
+      puts ""
+      puts "Add this into your application's IAM group."
     end
 
     def build_queues

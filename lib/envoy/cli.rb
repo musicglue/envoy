@@ -25,7 +25,6 @@ module Envoy
       end
       include_external_environment
       print_banner
-      check_requirements
       Envoy.start!
       sleep
     rescue Interrupt
@@ -44,16 +43,6 @@ module Envoy
     end
 
     private
-
-    def check_requirements
-      errors, warnings = [], []
-      warnings << '[WARNING] No queues defined' if Envoy.config.queues.count.zero?
-      puts warnings.join("\n") if warnings.any?
-      unless errors.blank?
-        puts errors.join("\n")
-        exit(1)
-      end
-    end
 
     def parse_options
       @opts = {
@@ -83,7 +72,7 @@ module Envoy
     end
 
     def print_banner
-      Celluloid.logger.info "Starting Envoy under #{Envoy.env} environment: v#{Envoy::VERSION} (Nematode Worm)"
+      Celluloid.logger.info "Starting Envoy under #{Rails.env} environment: v#{Envoy::VERSION} (Pikaia)"
     end
 
     def handle_signal(signal)

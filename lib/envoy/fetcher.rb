@@ -1,4 +1,3 @@
-require 'securerandom'
 module Envoy
   class Fetcher
     include Celluloid
@@ -7,9 +6,9 @@ module Envoy
 
     attr_reader :currently_processing
 
-    def initialize(concurrency, broker, queue)
+    def initialize(concurrent_messages_limit, broker, queue)
       @currently_processing = Set.new
-      @maximum_concurrently = concurrency
+      @maximum_concurrently = concurrent_messages_limit
       @broker = broker
       @run = true
       @fetcher_id = SecureRandom.hex(4)

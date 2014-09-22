@@ -1,7 +1,7 @@
 module Envoy
-  class QueueName
+  class EnvironmentalName
     def initialize name
-      @name = [name.to_s.dasherize, Envoy.env].join('-')
+      @name = [name.to_s.dasherize, Rails.env].join('-')
     end
 
     def to_s

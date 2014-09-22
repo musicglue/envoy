@@ -6,11 +6,14 @@ module Envoy
       include Celluloid
       include Celluloid::Notifications
       include Envoy::Logging
-      include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
 
       attr_reader :message, :topic, :timer
 
-      add_transaction_tracer :safely_process, category: :task
+      if defined? ::NewRelic
+        include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
+
+        add_transaction_tracer :safely_process, category: :task
+      end
     end
 
     module ClassMethods
@@ -41,7 +44,9 @@ module Envoy
     end
 
     def safely_process
-      NewRelic::Agent.set_transaction_name("Envoy/#{self.class.name.underscore}")
+      if defined? ::NewRelic
+        NewRelic::Agent.set_transaction_name("Envoy/#{self.class.name.underscore}")
+      end
 
       safely do
         stack = ::Middleware::Builder.new

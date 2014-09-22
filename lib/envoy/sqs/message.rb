@@ -11,11 +11,13 @@ module Envoy
       finalizer :finalize
 
       attr_reader :sqs_id, :receipt, :queue_name, :notification_topic,
-                  :header, :body, :id, :type
+                  :header, :body, :id, :type,
+                  :raw_message
 
       alias_method :headers, :header
 
       def initialize(packet, queue, fetcher_id)
+        @raw_message = packet[:body]
         @fetcher_id = fetcher_id
         @sqs = queue
         @queue_name = queue.queue_name
@@ -25,10 +27,10 @@ module Envoy
         @sqs_id = packet[:message_id].strip
         @notification_topic = "message_#{@sqs_id}"
 
-        @sqs_message_body = JSON.parse(packet[:body]).with_indifferent_access
+        @parsed_message = JSON.parse(raw_message).with_indifferent_access
 
-        @header = @sqs_message_body['header']
-        @body = @sqs_message_body['body']
+        @header = @parsed_message['headers'] || @parsed_message['header']
+        @body = @parsed_message['body']
 
         @id = @header[:id]
         @type = @header[:type].underscore.to_sym
@@ -42,7 +44,7 @@ module Envoy
 
         @header ||= { type: 'message' }.with_indifferent_access
         @body ||= {}
-        @sqs_message_body = { header: @header, body: @body }.with_indifferent_access
+        @parsed_message = { header: @header, body: @body }.with_indifferent_access
 
         unprocessable
 
@@ -57,7 +59,10 @@ module Envoy
 
       def died
         info log_data.merge(at: 'died', 'retry' => true)
-        Envoy.config.messages.died.call(self)
+
+        callback = Envoy.config.callbacks.message_died
+        callback.call(self) if callback
+
         terminate
       end
 
@@ -84,7 +89,10 @@ module Envoy
 
       def unprocessable
         info log_data.merge(at: 'unprocessable', 'retry' => false)
-        Envoy.config.messages.unprocessable.call(self)
+
+        callback = Envoy.config.callbacks.message_unprocessable
+        callback.call(self) if callback
+
         @sqs.delete_message(@receipt)
         terminate if Thread.current[:celluloid_actor].mailbox.alive?
       end
@@ -97,7 +105,7 @@ module Envoy
       end
 
       def to_h
-        @sqs_message_body
+        @parsed_message
       end
 
       def heartbeat

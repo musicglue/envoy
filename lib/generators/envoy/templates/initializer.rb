@@ -1,54 +1,62 @@
 Envoy.configure do |config|
+  # AWS account configuration:
 
-  # Define your AWS Credentials here, available symbols are:
-  #
-  # config.aws.credentials = { access_key_id: nil, secret_access_key: nil }
+  config.aws.access_key = ENV['AWS_ACCESS_KEY']
+  config.aws.secret_key = ENV['AWS_SECRET_KEY']
+  config.aws.region = ENV['AWS_REGION']
+  config.aws.account_id = ENV['AWS_ACCOUNT_ID']
 
-  # And region
-  #
-  # config.aws.region = 'eu-west-1'
+  # SNS configuration:
 
-  # Define the queues you wish to bind to. You should supply the queue name
-  # as an underscored symbol, but you can also supply an options hash which
-  # is passed directly to Aws::SQS::Client.new. See the documention on AWS
-  # for available options.
-  #
-  # config.queues.add_queue(:the_queue_name, { endpoint: 'http://localhost:6059' })
+  if Rails.env.development?
+    config.sns.endpoint = "http://#{config.aws.region}.localhost:6061"
+    config.sns.protocol = 'cqs'
+  end
 
-  # The maximum number of concurrent workers and brokers running
-  #
-  # config.concurrency = 10
+  # SQS configuration:
 
-  # Mappings from queue name to message name to worker. Wildcard message names
-  # are supported. If you intend to use the DeadLetterWorker you should add a
-  # mapping from your dead letter queue.
-  #
-  # config.mappings = {
-  #   dead_letters: { '*' => 'Envoy::DeadLetterWorker' },
-  #   your_queue: { message_name: 'MyWorker' }
-  # }
+  if Rails.env.development?
+    config.sqs.endpoint = "http://#{config.aws.region}.localhost:6059"
+    config.sqs.protocol = 'cqs'
+  end
 
-  # The broker class responsible for determining the mappings, this can be
-  # overriden here, but you shouldn't need to.
+  # Fetcher configuration:
   #
-  # config.broker = MyBroker
+  #   config.fetcher.concurrent_messages_limit = 10
 
-  # The dispatcher is responsible for actually calling the processing of your
-  # custom logic, again this can be overriden here, but in most situations you
-  # shouldn't need to.
+  # Callbacks configuration:
   #
-  # config.dispatcher = MyDispatcher
+  #   config.callbacks.message_died = ->(message) { ... }
+  #   config.callbacks.message_unprocessable = ->(message) { ... }
 
-  # Client actors are celluloid actors that can be inserted into the main
-  # application loop. You can define them here as an array of classes that must
-  # respond to a run() method.
+  # Celluloid configuration:
   #
-  # config.client_actors << MyActorClass
+  #   config.celluloid.actors += [MyActor1, MyActor2]
 
-  # If you need to handle something specific within the SQS::Message lifecycle
-  # then the message option provides several hook lambdas that are triggered when
-  # it either dies, or is rendered unprocessable.
+  # Queue defaults configuration:
   #
-  # config.messages.died          = ->(message) { Rails.logger.info "#{message.to_s} died"}
-  # config.messages.unprocessable = ->(message) { Rails.logger.info "#{message.to_s} unprocessable"}
+  #   config.queue_defaults.delay_seconds = 0
+  #   config.queue_defaults.message_retention_period = 1_209_600
+  #   config.queue_defaults.visibility_timeout = 30
+  #
+  #   config.queue_defaults.redrive_policy.enabled = true
+  #   config.queue_defaults.redrive_policy.max_receive_count = 10
+
+  # Subscription defaults configuration:
+  #
+  #   config.subscription_defaults.raw_message_delivery = true
+
+  # Queue configuration:
+  #
+  #   config.add_dead_letter_queue 'my_dlq'
+  #
+  #   config.add_queue('important_events_queue') do |queue, subscriptions|
+  #     queue.redrive_policy.dead_letter_queue = 'my_dlq'
+  #     subscriptions.add 'something_happened', 'MyWorker'
+  #   end
+  #
+  #   config.add_queue('unimportant_events_queue') do |queue, subscriptions|
+  #     queue.redrive_policy.enabled = false
+  #     subscriptions.add 'something_else_happened', 'MyOtherWorker'
+  #   end
 end

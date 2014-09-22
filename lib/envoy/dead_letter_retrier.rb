@@ -1,7 +1,7 @@
 module Envoy
   class DeadLetterRetrier
     def initialize
-      @sanitizer = Docket::MessageSanitizer.new
+      @sanitizer = MessageSanitizer.new
     end
 
     def retry scope

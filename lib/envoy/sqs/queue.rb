@@ -8,7 +8,11 @@ module Envoy
         @endpoint = endpoint
         @mutex = Mutex.new
         @queue_name = EnvironmentalName.new(config.name).to_s
-        @sqs = Aws::SQS::Client.new endpoint: @endpoint
+
+        attrs = {}
+        attrs[:endpoint] = @config.sqs.endpoint unless @config.sqs.endpoint.blank?
+
+        @sqs = Aws::SQS::Client.new attrs
       end
 
       def arn

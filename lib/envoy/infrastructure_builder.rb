@@ -191,14 +191,20 @@ module Envoy
     end
 
     def sns_client
-      Aws::SNS::Client.new endpoint: @config.sns.endpoint
+      attrs = {}
+      attrs[:endpoint] = @config.sns.endpoint unless @config.sns.endpoint.blank?
+      Aws::SNS::Client.new attrs
     end
 
     def sqs_client
-      Aws::SQS::Client.new endpoint: @config.sqs.endpoint
+      attrs = {}
+      attrs[:endpoint] = @config.sqs.endpoint unless @config.sqs.endpoint.blank?
+      Aws::SQS::Client.new attrs
     end
 
     def wait_for_queue sqs, name
+      url = ''
+
       loop do
         begin
           url = sqs.get_queue_url(queue_name: name).data.queue_url

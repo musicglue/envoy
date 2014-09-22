@@ -1,9 +1,6 @@
-services:
-  - cassandra
-
 env:
   global:
-    - ENVOY_ENV=test
+    - RAILS_ENV=test
 
 notifications:
   hipchat: 4c9312238a5ef355ef8e321fc2bab7@Music Glue
@@ -12,8 +9,5 @@ language: ruby
 
 rvm:
   - ruby-2.1.2
-
-before_script:
-  - wget https://s3-us-west-1.amazonaws.com/cmb-releases/2.2.41/cmb-distribution-2.2.41.tar.gz
 
 script: bundle exec rake test

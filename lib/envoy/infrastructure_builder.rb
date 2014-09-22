@@ -42,7 +42,13 @@ module Envoy
     private
 
     def all_queues
-      @config.queues.map(&:name).flatten.uniq.map do |queue|
+      names = @config.queues.map(&:name)
+
+      if @config.dead_letter_queue
+        names += [@config.dead_letter_queue.name]
+      end
+
+      names.flatten.uniq.map do |queue|
         EnvironmentalName.new(queue).to_s
       end
     end

@@ -9,6 +9,7 @@ module Envoy
     end
 
     def build_policies
+      puts application_policy
     end
 
     def build_queues
@@ -22,31 +23,6 @@ module Envoy
         topics = queue.subscribed_topics
         create_queue log_data, queue, topics, topics
       end
-
-      # @manifest[:queues].each do |queue|
-      #   queue_name = [queue[:name].to_s.dasherize, Docket.env.downcase].join('-')
-
-      #   say_status :info, "Queue #{queue_name} requested", :light_blue
-
-      #   @sqs_connection.create_queue(queue_name: queue_name)
-      #   queue_url = wait_for_queue queue_name
-
-      #   if queue[:attributes]
-      #     attrs = queue[:attributes]
-
-      #     if attrs['RedrivePolicy'] && attrs['RedrivePolicy']['deadLetterTargetArn'].is_a?(Symbol)
-      #       dead_letter_name  = [attrs['RedrivePolicy']['deadLetterTargetArn'].to_s.dasherize, Docket.env.downcase].join('-')
-      #       @sqs_connection.create_queue(queue_name: dead_letter_name)
-      #       dead_letter_url   = wait_for_queue dead_letter_name
-      #       dead_letter_arn   = @sqs_connection.get_queue_attributes(queue_url: dead_letter_url, attribute_names: ['QueueArn']).attributes['QueueArn']
-      #       attrs['RedrivePolicy']['deadLetterTargetArn'] = dead_letter_arn
-      #     end
-      #     @sqs_connection.set_queue_attributes(queue_url: queue_url, attributes: attrs.each_with_object({}) {|(k,v),o| o[k] = v.to_s })
-      #     say_status :success, "Set #{attrs.keys.join(', ')} for #{queue_name}", :green
-      #   end
-
-      #   say_status :success, "#{queue_name} created successfully", :green
-      # end
     end
 
     def build_topics
@@ -57,41 +33,53 @@ module Envoy
         info log_data.merge topic: topic
         sns.create_topic name: topic
       end
-
-      # @manifest[:topics].each do |topic|
-      #   arn = @sns_connection.create_topic(name: [topic[:topic].to_s.dasherize, Docket.env.downcase].join('-')).topic_arn
-
-      #   say_status :success, "Topic #{arn} created successfully", :green
-
-      #   (topic[:subscriptions] || []).each do |sub|
-      #     if sub[:protocol] == :sqs || sub[:protocol] == :cqs
-      #       url = wait_for_queue "#{sub[:endpoint].to_s.dasherize}-#{Docket.env.downcase}"
-      #       endpoint = @sqs_connection.get_queue_attributes(queue_url: url, attribute_names: ['QueueArn']).attributes['QueueArn']
-      #     else
-      #       endpoint = sub[:endpoint]
-      #     end
-
-      #     sub_arn = @sns_connection.subscribe(topic_arn: arn, protocol: sub[:protocol], endpoint: endpoint).subscription_arn
-
-      #     say_status :success, "Subscription #{endpoint} created successfully", :green
-
-      #     attributes = { RawMessageDelivery: true }.merge(sub[:attributes] || {})
-
-      #     attributes.each do |key, value|
-      #       next if key.blank? || value.blank?
-
-      #       say_status :success, "Set #{key} on #{sub_arn}", :green
-
-      #       @sns_connection.set_subscription_attributes(subscription_arn: sub_arn, attribute_name: key.to_s, attribute_value: value.to_s)
-      #     end
-      #   end
-      # end
     end
 
     private
 
+    def all_queues
+      @config.queues.map(&:name).flatten.uniq
+    end
+
     def all_topics
       @config.queues.map(&:subscribed_topics).flatten.uniq
+    end
+
+    def application_policy
+      topic_arns = all_topics.map { |topic| sns_topic_arn topic }
+      queue_arns = all_queues.map { |queue| sqs_queue_arn queue }
+
+      <<-EOS.strip_heredoc
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": [
+              "sns:CreateTopic",
+              "sns:Publish",
+              "sns:SetEndpointAttributes",
+              "sns:SetSubscriptionAttributes",
+              "sns:Subscribe"
+            ],
+            "Resource": #{topic_arns.to_json}
+          },
+          {
+            "Effect": "Allow",
+            "Action": [
+              "sqs:ChangeMessageVisibility",
+              "sqs:CreateQueue",
+              "sqs:DeleteMessage",
+              "sqs:GetQueueAttributes",
+              "sqs:GetQueueUrl",
+              "sqs:ReceiveMessage",
+              "sqs:SetQueueAttributes"
+            ],
+            "Resource": #{queue_arns.to_json}
+          }
+        ]
+      }
+      EOS
     end
 
     def create_queue log_data, queue, subscribed_topics, permitted_topics
@@ -149,30 +137,6 @@ module Envoy
       end
     end
 
-    def sns_arn
-      if @config.sns.protocol == 'cqs'
-        "arn:cmb:cns:ccp:#{@config.aws.account_id}"
-      else
-        "arn:aws:sns:#{@config.aws.region}:#{@config.aws.account_id}"
-      end
-    end
-
-    def sns_topic_arn topic
-      "#{sns_arn}:#{topic}"
-    end
-
-    def sqs_arn
-      if @config.sqs.protocol == 'cqs'
-        "arn:cmb:cqs:ccp:#{@config.aws.account_id}"
-      else
-        "arn:aws:sqs:#{@config.aws.region}:#{@config.aws.account_id}"
-      end
-    end
-
-    def sqs_queue_arn queue
-      "#{sqs_arn}:#{queue}"
-    end
-
     def queue_policy queue, topics
       queue_arn = sqs_queue_arn queue
       topic_arns = topics.map { |topic| sns_topic_arn topic }
@@ -205,16 +169,40 @@ module Envoy
       %Q({"maxReceiveCount":"#{max_receive_count}", "deadLetterTargetArn":"#{arn}"})
     end
 
+    def sns_arn
+      if @config.sns.protocol == 'cqs'
+        "arn:cmb:cns:ccp:#{@config.aws.account_id}"
+      else
+        "arn:aws:sns:#{@config.aws.region}:#{@config.aws.account_id}"
+      end
+    end
+
     def sns_client
       attrs = {}
       attrs[:endpoint] = @config.sns.endpoint unless @config.sns.endpoint.blank?
       Aws::SNS::Client.new attrs
     end
 
+    def sns_topic_arn topic
+      "#{sns_arn}:#{topic}"
+    end
+
+    def sqs_arn
+      if @config.sqs.protocol == 'cqs'
+        "arn:cmb:cqs:ccp:#{@config.aws.account_id}"
+      else
+        "arn:aws:sqs:#{@config.aws.region}:#{@config.aws.account_id}"
+      end
+    end
+
     def sqs_client
       attrs = {}
       attrs[:endpoint] = @config.sqs.endpoint unless @config.sqs.endpoint.blank?
       Aws::SQS::Client.new attrs
+    end
+
+    def sqs_queue_arn queue
+      "#{sqs_arn}:#{queue}"
     end
 
     def wait_for_queue sqs, name

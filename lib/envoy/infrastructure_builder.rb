@@ -110,16 +110,26 @@ module Envoy
       queue_url = wait_for_queue sqs, queue_name
       queue_arn = sqs.get_queue_attributes(queue_url: queue_url, attribute_names: ['QueueArn']).attributes['QueueArn']
 
-      policy = queue_policy queue_name, permitted_topics
-
       attributes = {
         'DelaySeconds' => queue.delay_seconds.to_s,
         'MessageRetentionPeriod' => queue.message_retention_period.to_s,
         'VisibilityTimeout' => queue.visibility_timeout.to_s
       }
 
-      attributes.merge!('Policy' => policy) if sqs_endpoint.blank?
-      # 'RedrivePolicy' => ''
+      if sqs_endpoint =~ /amazonaws.com/
+        if queue.respond_to?(:redrive_policy)
+          policy = if queue.redrive_policy.enabled
+            redrive_policy queue.redrive_policy.dead_letter_queue, queue.redrive_policy.max_receive_count
+          else
+            '{}'
+          end
+
+          attributes.merge! 'RedrivePolicy' => policy
+        end
+
+        policy = queue_policy queue_name, permitted_topics
+        attributes.merge! 'Policy' => policy
+      end
 
       info log_data.merge step: 'set_queue_attributes', name: queue_name, attributes: attributes
       sqs.set_queue_attributes queue_url: queue_url, attributes: attributes
@@ -188,6 +198,11 @@ module Envoy
         ]
       }
       EOS
+    end
+
+    def redrive_policy dead_letter_queue, max_receive_count
+      arn = sqs_queue_arn EnvironmentalName.new(dead_letter_queue).to_s
+      %Q({"maxReceiveCount":"#{max_receive_count}", "deadLetterTargetArn":"#{arn}"})
     end
 
     def sns_client

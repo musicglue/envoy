@@ -1,3 +1,6 @@
+services:
+  - cassandra
+
 env:
   global:
     - ENVOY_ENV=test
@@ -9,5 +12,8 @@ language: ruby
 
 rvm:
   - ruby-2.1.2
+
+before_script:
+  - wget https://s3-us-west-1.amazonaws.com/cmb-releases/2.2.41/cmb-distribution-2.2.41.tar.gz
 
 script: bundle exec rake test

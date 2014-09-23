@@ -10,14 +10,14 @@ Dir.chdir APP_ROOT do
   # Add necessary setup steps to this file:
 
   puts "== Installing dependencies =="
-  system "gem install bundler --conservative"
-  system "bundle check || bundle install"
+  system("gem install bundler --conservative") || exit $?
+  system("bundle check || bundle install") || exit $?
 
   puts "\n== Preparing test app database =="
   system "rm -f test/dummy/db/migrate/*.rb"
-  system "cd test/dummy && rails g envoy:install --force"
-  system "RAILS_ENV=test rake -f ./test/dummy/Rakefile db:drop db:create db:enable_extensions db:migrate"
+  system("cd test/dummy && rails g envoy:install --force") || exit $?
+  system("RAILS_ENV=test rake -f ./test/dummy/Rakefile db:drop db:create db:enable_extensions db:migrate") || exit $?
 
   puts "\n== Running specs =="
-  system "rake test"
+  system("rake test") || exit $?
 end

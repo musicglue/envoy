@@ -2,6 +2,8 @@ module Envoy
   module SQS
     class Message
       class InvalidMessageFormatError < StandardError; end
+      class UnprocessableMessageError < StandardError; end
+      class DeadMessageError < StandardError; end
 
       INACTIVITY_TIMEOUT = 10
       include Celluloid
@@ -56,10 +58,13 @@ module Envoy
       end
 
       def died
-        info log_data.merge(at: 'died', 'retry' => true)
+        error = DeadMessageError.new
+        error.set_backtrace caller
+
+        info log_data.merge(at: 'died', 'retry' => true), error
 
         callback = Envoy.config.callbacks.message_died
-        callback.call(self) if callback
+        callback.call(self, error) if callback
 
         terminate
       end
@@ -85,11 +90,15 @@ module Envoy
         }
       end
 
-      def unprocessable e = nil
-        error log_data.merge(at: 'unprocessable', 'retry' => false), e
+      def unprocessable error = nil
+        error ||= UnprocessableMessageError.new.tap do |e|
+          e.set_backtrace caller
+        end
+
+        error log_data.merge(at: 'unprocessable', 'retry' => false), error
 
         callback = Envoy.config.callbacks.message_unprocessable
-        callback.call(self, e) if callback
+        callback.call(self, error) if callback
 
         @sqs.delete_message(@receipt)
         terminate if Thread.current[:celluloid_actor].mailbox.alive?

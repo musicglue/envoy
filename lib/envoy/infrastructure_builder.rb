@@ -57,6 +57,10 @@ module Envoy
       @config.queues.map(&:subscribed_topics).flatten.uniq
     end
 
+    def arn_array_policy_string arns, indent
+      arns.sort.map { |arn| %Q(#{indent}"#{arn}") }.join(",\n")
+    end
+
     def application_policy
       topic_arns = all_topics.map { |topic| sns_topic_arn topic }
       queue_arns = all_queues.map { |queue| sqs_queue_arn queue }
@@ -74,7 +78,9 @@ module Envoy
               "sns:SetSubscriptionAttributes",
               "sns:Subscribe"
             ],
-            "Resource": #{topic_arns.to_json}
+            "Resource": [
+#{arn_array_policy_string topic_arns, '              '}
+            ]
           },
           {
             "Effect": "Allow",
@@ -87,7 +93,9 @@ module Envoy
               "sqs:ReceiveMessage",
               "sqs:SetQueueAttributes"
             ],
-            "Resource": #{queue_arns.to_json}
+            "Resource": [
+#{arn_array_policy_string queue_arns, '              '}
+            ]
           }
         ]
       }
@@ -144,7 +152,7 @@ module Envoy
         attribute = 'RawMessageDelivery'
         value = queue.subscriptions.raw_message_delivery.to_s
 
-        info subscription_log_data.merge step: 'setting_subscription_attributes', attribute: attribute, value: value
+        info subscription_log_data.merge step: 'setting_subscription_attributes', subscription_arn: subscription_arn, attribute: attribute, value: value
         sns.set_subscription_attributes subscription_arn: subscription_arn, attribute_name: attribute, attribute_value: value
       end
     end
@@ -167,7 +175,9 @@ module Envoy
             "Resource": "#{queue_arn}",
             "Condition": {
               "ArnEquals": {
-                "aws:SourceArn": #{topic_arns.to_json}
+                "aws:SourceArn": [
+#{arn_array_policy_string topic_arns, '                  '}
+                ]
               }
             }
           }

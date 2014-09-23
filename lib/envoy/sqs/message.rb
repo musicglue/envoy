@@ -40,13 +40,11 @@ module Envoy
 
         fail InvalidMessageFormatError unless @header && @body
       rescue => e
-        error log_data.merge(at: 'initialize'), e
-
         @header ||= { type: 'message' }.with_indifferent_access
         @body ||= {}
         @parsed_message = { header: @header, body: @body }.with_indifferent_access
 
-        unprocessable
+        unprocessable e
 
         return nil
       end
@@ -87,11 +85,11 @@ module Envoy
         }
       end
 
-      def unprocessable
-        info log_data.merge(at: 'unprocessable', 'retry' => false)
+      def unprocessable e = nil
+        error log_data.merge(at: 'unprocessable', 'retry' => false), e
 
         callback = Envoy.config.callbacks.message_unprocessable
-        callback.call(self) if callback
+        callback.call(self, e) if callback
 
         @sqs.delete_message(@receipt)
         terminate if Thread.current[:celluloid_actor].mailbox.alive?

@@ -3,14 +3,22 @@ addons:
 
 env:
   global:
-    - RAILS_ENV=test
+  - AMAZON_S3_BUCKET=musicglue-bundle-cache
+  - AMAZON_ACCESS_KEY_ID=AKIAITNVCO5SLJMTVVYQ
+  - RAILS_ENV=test
+  - secure: "JhkPGii9FK7mdx7rsQUamTDzNblBhHeEvMjzrJxC4J66JUUHO7jpLAzwYZ+uUeiq1rWVPHHPenUr8/AfNlTEoMkna8Ffp/ZjAH6wykr0b+gjcQOUo3bb8/a576eAXIKQCxgM4dbAu8ZUxPJ2sTuhm+ofd3XY+Rh5guHaXxA0IOk="
 
-notifications:
-  hipchat: 4c9312238a5ef355ef8e321fc2bab7@Music Glue
+rvm:
+  - 2.1.2
 
 language: ruby
 
-rvm:
-  - ruby-2.1.2
+bundler_args: "--without development"
+
+install:
+  - "./script/cached-bundle install --deployment"
 
 script: bin/setup
+
+notifications:
+  hipchat: 4c9312238a5ef355ef8e321fc2bab7@Music Glue

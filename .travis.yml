@@ -10,4 +10,4 @@ language: ruby
 rvm:
   - ruby-2.1.2
 
-script: bundle exec rake test
+script: bin/setup

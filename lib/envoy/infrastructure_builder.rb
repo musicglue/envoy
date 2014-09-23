@@ -75,11 +75,19 @@ module Envoy
               "sns:CreateTopic",
               "sns:Publish",
               "sns:SetEndpointAttributes",
-              "sns:SetSubscriptionAttributes",
               "sns:Subscribe"
             ],
             "Resource": [
 #{arn_array_policy_string topic_arns, '              '}
+            ]
+          },
+          {
+            "Effect": "Allow",
+            "Action": [
+              "sns:SetSubscriptionAttributes"
+            ],
+            "Resource": [
+              "#{sns_topic_arn '*'}"
             ]
           },
           {

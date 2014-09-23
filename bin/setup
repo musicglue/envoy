@@ -15,9 +15,9 @@ Dir.chdir APP_ROOT do
 
   puts "\n== Preparing test app database =="
   system "rm -f test/dummy/db/migrate/*.rb"
-  system("cd test/dummy && rails g envoy:install --force") || exit($?)
-  system("RAILS_ENV=test rake -f ./test/dummy/Rakefile db:drop db:create db:enable_extensions db:migrate") || exit($?)
+  system("cd test/dummy && bundle exec rails g envoy:install --force") || exit($?)
+  system("RAILS_ENV=test bundle exec rake -f ./test/dummy/Rakefile db:drop db:create db:enable_extensions db:migrate") || exit($?)
 
   puts "\n== Running specs =="
-  system("rake test") || exit($?)
+  system("bundle exec rake test") || exit($?)
 end

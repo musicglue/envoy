@@ -16,25 +16,12 @@ if ActiveSupport::TestCase.method_defined?(:fixture_path=)
   ActiveSupport::TestCase.fixture_path = File.expand_path('../fixtures', __FILE__)
 end
 
-require 'database_cleaner'
 require 'minitest/rg'
 require 'minitest/focus'
 require 'minitest-spec-rails'
 require 'pry-byebug'
 require 'vcr'
 require 'webmock'
-
-DatabaseCleaner.strategy = :truncation
-
-class MiniTest::Spec
-  before :each do
-    DatabaseCleaner.start
-  end
-
-  after :each do
-    DatabaseCleaner.clean
-  end
-end
 
 VCR.configure do |c|
   c.cassette_library_dir = 'test/cassettes'

@@ -28,6 +28,8 @@ module Envoy
   def start!
     return if @started
 
+    config.validate!
+
     Celluloid.logger = Logger.new STDOUT
     Celluloid.logger.level = Rails.logger.level
     Celluloid.logger.formatter = Rails.logger.formatter
@@ -57,8 +59,6 @@ module Envoy
 
   def configure
     yield config
-
-    config.update_aws
   end
 
   def config

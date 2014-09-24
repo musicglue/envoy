@@ -50,6 +50,14 @@ module Envoy
       end
     end
 
+    def validate!
+      @config.update_aws
+
+      return if valid?
+
+      fail %(Invalid configuration: \n\n#{config.errors.join("\n")}\n\n)
+    end
+
     def add_dead_letter_queue name
       fail 'Dead letter queue already configured.' if @dead_letter_queue
 

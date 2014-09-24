@@ -1,18 +1,19 @@
+# rubocop:disable Metrics/ClassLength
 module Envoy
   class InfrastructureBuilder
     include Envoy::Logging
 
     def initialize config
       @config = config
-      @config.update_aws
+      @config.validate!
       @log_data ||= { component: 'infrastructure_builder' }
     end
 
     def build_policies
       puts "Application policy for the #{Rails.env} environment:"
-      puts ""
+      puts ''
       puts application_policy
-      puts ""
+      puts ''
       puts "Add this into your application's IAM group."
     end
 
@@ -43,10 +44,7 @@ module Envoy
 
     def all_queues
       names = @config.queues.map(&:name)
-
-      if @config.dead_letter_queue
-        names += [@config.dead_letter_queue.name]
-      end
+      names += [@config.dead_letter_queue.name] if @config.dead_letter_queue
 
       names.flatten.uniq.map do |queue|
         EnvironmentalName.new(queue).to_s
@@ -124,7 +122,9 @@ module Envoy
       info log_data.merge step: 'create_queue', name: queue_name
       sqs.create_queue queue_name: queue_name
       queue_url = wait_for_queue sqs, queue_name
-      queue_arn = sqs.get_queue_attributes(queue_url: queue_url, attribute_names: ['QueueArn']).attributes['QueueArn']
+      queue_arn = sqs.get_queue_attributes(
+        queue_url: queue_url,
+        attribute_names: ['QueueArn']).attributes['QueueArn']
 
       attributes = {
         'DelaySeconds' => queue.delay_seconds.to_s,
@@ -135,10 +135,10 @@ module Envoy
       if sqs_endpoint =~ /amazonaws.com/
         if queue.respond_to?(:redrive_policy)
           policy = if queue.redrive_policy.enabled
-            redrive_policy queue.redrive_policy.dead_letter_queue, queue.redrive_policy.max_receive_count
-          else
-            '{}'
-          end
+                     redrive_policy queue.redrive_policy.dead_letter_queue, queue.redrive_policy.max_receive_count
+                   else
+                     '{}'
+                   end
 
           attributes.merge! 'RedrivePolicy' => policy
         end
@@ -155,13 +155,23 @@ module Envoy
         subscription_log_data = log_data.merge queue_arn: queue_arn, topic_arn: topic_arn
 
         info subscription_log_data.merge step: 'subscribing_queue_to_topic', protocol: @config.sns.protocol
-        subscription_arn = sns.subscribe(endpoint: queue_arn, protocol: @config.sns.protocol, topic_arn: topic_arn).subscription_arn
+        subscription_arn = sns.subscribe(
+          endpoint: queue_arn,
+          protocol: @config.sns.protocol,
+          topic_arn: topic_arn).subscription_arn
 
         attribute = 'RawMessageDelivery'
         value = queue.subscriptions.raw_message_delivery.to_s
 
-        info subscription_log_data.merge step: 'setting_subscription_attributes', subscription_arn: subscription_arn, attribute: attribute, value: value
-        sns.set_subscription_attributes subscription_arn: subscription_arn, attribute_name: attribute, attribute_value: value
+        info subscription_log_data.merge(
+          step: 'setting_subscription_attributes',
+          attribute: attribute,
+          value: value)
+
+        sns.set_subscription_attributes(
+          subscription_arn: subscription_arn,
+          attribute_name: attribute,
+          attribute_value: value)
       end
     end
 
@@ -196,7 +206,7 @@ module Envoy
 
     def redrive_policy dead_letter_queue, max_receive_count
       arn = sqs_queue_arn EnvironmentalName.new(dead_letter_queue).to_s
-      %Q({"maxReceiveCount":"#{max_receive_count}", "deadLetterTargetArn":"#{arn}"})
+      %({"maxReceiveCount":"#{max_receive_count}", "deadLetterTargetArn":"#{arn}"})
     end
 
     def sns_arn
@@ -252,3 +262,4 @@ module Envoy
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

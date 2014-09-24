@@ -51,7 +51,7 @@ module Envoy
     end
 
     def validate!
-      @config.update_aws
+      update_aws
 
       return if valid?
 

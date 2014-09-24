@@ -75,7 +75,9 @@ module Envoy
         error log_data.merge(at: 'safely'), e
         failed
       ensure
+        # rubocop:disable Style/RescueModifier
         terminate rescue DeadActorError
+        # rubocop:enable Style/RescueModifier
       end
     end
 

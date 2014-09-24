@@ -2,7 +2,7 @@ require 'test_helper'
 
 describe Envoy::Fetcher do
   let(:message_hash)    { SQS_MESSAGE_HASH }
-  let(:mock_queue)      { MockQueue.new(:queue_name) }
+  let(:mock_queue)      { MockQueue.new(:queue_name, Envoy::Configuration::QueueConfiguration.new('abc')) }
   let(:mock_broker)     { MockBroker.new }
   let(:described_class) { Envoy::Fetcher.new(1, mock_broker, mock_queue) }
 

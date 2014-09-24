@@ -5,8 +5,8 @@ class MockDispatcher
     @processed_messages = []
   end
 
-  def process workflow_class, message
-    @processed_messages << OpenStruct.new(workflow_class: workflow_class, message: message)
+  def process worker_class, message
+    @processed_messages << OpenStruct.new(worker_class: worker_class, message: message)
   end
 
   attr_reader :processed_messages

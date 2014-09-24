@@ -2,7 +2,7 @@ require 'test_helper'
 
 describe Envoy::Worker do
   before do
-    @mock_queue = MockQueue.new :queue_name
+    @mock_queue = MockQueue.new :queue_name, Envoy::Configuration::QueueConfiguration.new('abc')
     @sqs_message = SQS_MESSAGE_HASH
     @mock_queue.push @sqs_message
     @packet = @mock_queue.pop(1).first

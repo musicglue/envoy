@@ -3,7 +3,7 @@ module Envoy
     class Queue
       include Envoy::Logging
 
-      attr_reader :queue_name, :sqs
+      attr_reader :queue_name, :sqs, :config
 
       def initialize config, endpoint
         @config = config
@@ -53,10 +53,6 @@ module Envoy
           warn component: 'queue', at: 'inbound_queue', error: 'non_existant_queue', name: @queue_name
           nil
         end
-      end
-
-      def mappings
-        @config.subscriptions.mappings
       end
 
       def pop(number = 10)

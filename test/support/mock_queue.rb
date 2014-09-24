@@ -1,13 +1,13 @@
 require 'ostruct'
 
 class MockQueue
-  attr_reader :queue, :queue_name, :mappings
+  attr_reader :queue, :queue_name, :config
 
-  def initialize(queue_name, mappings = {})
+  def initialize(queue_name, config)
     @queue_name = queue_name
+    @config = config
     @queue = []
     @read_messages = []
-    @mappings = mappings
   end
 
   def get(handle)

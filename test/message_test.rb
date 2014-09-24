@@ -2,7 +2,7 @@ require 'test_helper'
 
 describe Envoy::SQS::Message do
   let(:sqs_message)     { SQS_MESSAGE_HASH }
-  let(:mock_queue)      { MockQueue.new(:queue_name) }
+  let(:mock_queue)      { MockQueue.new(:queue_name, Envoy::Configuration::QueueConfiguration.new('abc')) }
   let(:fetcher_id)      { SecureRandom.hex(4) }
   let(:described_class) { Envoy::SQS::Message.new(packet, mock_queue, fetcher_id) }
 

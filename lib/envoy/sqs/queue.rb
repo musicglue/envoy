@@ -50,7 +50,7 @@ module Envoy
         @inbound_queue ||= begin
           @sqs.get_queue_url(queue_name: @queue_name).data.queue_url
         rescue Aws::SQS::Errors::NonExistentQueue
-          warn component: "queue", at: "inbound_queue", error: "non_existant_queue", name: @queue_name
+          warn component: 'queue', at: 'inbound_queue', error: 'non_existant_queue', name: @queue_name
           nil
         end
       end

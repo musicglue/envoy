@@ -75,7 +75,7 @@ module Envoy
         error log_data.merge(at: 'safely'), e
         failed
       ensure
-        terminate
+        terminate rescue DeadActorError
       end
     end
 

@@ -56,7 +56,7 @@ module Envoy
     end
 
     def arn_array_policy_string arns, indent
-      arns.sort.map { |arn| %Q(#{indent}"#{arn}") }.join(",\n")
+      arns.sort.map { |arn| %(#{indent}"#{arn}") }.join(",\n")
     end
 
     def application_policy

@@ -5,6 +5,7 @@ env:
   global:
   - AMAZON_S3_BUCKET=musicglue-bundle-cache
   - AMAZON_ACCESS_KEY_ID=AKIAITNVCO5SLJMTVVYQ
+  - AWS_REGION='eu-west-1'
   - RAILS_ENV=test
   - secure: "JhkPGii9FK7mdx7rsQUamTDzNblBhHeEvMjzrJxC4J66JUUHO7jpLAzwYZ+uUeiq1rWVPHHPenUr8/AfNlTEoMkna8Ffp/ZjAH6wykr0b+gjcQOUo3bb8/a576eAXIKQCxgM4dbAu8ZUxPJ2sTuhm+ofd3XY+Rh5guHaXxA0IOk="
 

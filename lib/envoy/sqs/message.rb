@@ -61,8 +61,6 @@ module Envoy
         error = DeadMessageError.new
         error.set_backtrace caller
 
-        info log_data.merge(at: 'died', 'retry' => true), error
-
         callback = Envoy.config.callbacks.message_died
         callback.call(self, error) if callback
 

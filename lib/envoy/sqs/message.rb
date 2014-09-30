@@ -5,10 +5,17 @@ module Envoy
       class UnprocessableMessageError < StandardError; end
       class DeadMessageError < StandardError; end
 
-      INACTIVITY_TIMEOUT = 10
       include Celluloid
       include Celluloid::Notifications
       include Envoy::Logging
+
+      def self.inactivity_timeout
+        @inactivity_timeout ||= 10
+      end
+
+      class << self
+        attr_writer :inactivity_timeout
+      end
 
       finalizer :finalize
 
@@ -23,7 +30,12 @@ module Envoy
         @fetcher_id = fetcher_id
         @sqs = queue
         @queue_name = queue.queue_name
-        @timer = after(INACTIVITY_TIMEOUT) { died }
+
+        @timer = after(self.class.inactivity_timeout) do
+          warn log_data.merge(at: 'inactivity_timeout')
+          died
+        end
+
         @received_at = Time.now
         @receipt = packet[:receipt_handle].strip
         @sqs_id = packet[:message_id].strip
@@ -114,7 +126,8 @@ module Envoy
       end
 
       def heartbeat
-        @sqs.extend_invisibility(@receipt, (INACTIVITY_TIMEOUT * 2))
+        debug log_data.merge(at: 'heartbeat')
+        @sqs.extend_invisibility(@receipt, (self.class.inactivity_timeout * 2))
         @timer.reset
       end
     end

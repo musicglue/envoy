@@ -8,11 +8,12 @@ describe Envoy::Worker do
     @packet = @mock_queue.pop(1).first
     @fetcher_id = SecureRandom.hex 4
     @message = Envoy::SQS::Message.new @packet, @mock_queue, @fetcher_id
+    @dispatcher = Envoy::Dispatcher.new
   end
 
   describe 'working worker' do
     before do
-      ::Worker.new(@message).safely_process
+      @dispatcher.process Worker, @message
       sleep 1
     end
 
@@ -23,12 +24,24 @@ describe Envoy::Worker do
 
   describe 'broken worker' do
     before do
-      ::BrokenWorker.new(@message).safely_process
+      @dispatcher.process BrokenWorker, @message
       sleep 1
     end
 
     it 'should error, and then make sure that the message still exists in the queue' do
       @mock_queue.get(@packet.receipt_handle).wont_be_nil
+    end
+  end
+
+  describe 'slow worker' do
+    before do
+      Envoy::SQS::Message.inactivity_timeout = 2
+      @dispatcher.process SlowWorker, @message
+      sleep 1
+    end
+
+    it 'should process correctly and remove the message from the queue' do
+      @mock_queue.get(@packet.receipt_handle).must_be_nil
     end
   end
 end

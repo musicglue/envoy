@@ -34,12 +34,21 @@ module Envoy
       end
 
       def delete_message(message_handle)
+        debug log_data.merge(
+          at: 'delete_message',
+          handle: message_handle)
+
         @sqs.delete_message(
           queue_url: inbound_queue,
           receipt_handle: message_handle)
       end
 
       def extend_invisibility(message_handle, timeout)
+        debug log_data.merge(
+          at: 'extend_invisibility',
+          handle: message_handle,
+          extension: timeout)
+
         @sqs.change_message_visibility(
           queue_url: inbound_queue,
           receipt_handle: message_handle,
@@ -50,9 +59,15 @@ module Envoy
         @inbound_queue ||= begin
           @sqs.get_queue_url(queue_name: @queue_name).data.queue_url
         rescue Aws::SQS::Errors::NonExistentQueue
-          warn component: 'queue', at: 'inbound_queue', error: 'non_existant_queue', name: @queue_name
+          warn log_data.merge(
+            at: 'inbound_queue',
+            error: 'non_existant_queue')
           nil
         end
+      end
+
+      def log_data
+        @log_data ||= { component: 'queue', name: @queue_name }
       end
 
       def pop(number = 10)

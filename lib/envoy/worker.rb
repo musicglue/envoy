@@ -7,7 +7,7 @@ module Envoy
       include Celluloid::Notifications
       include Envoy::Logging
 
-      attr_reader :message, :topic, :timer
+      attr_reader :message, :topic
 
       if defined? ::NewRelic
         include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
@@ -22,21 +22,18 @@ module Envoy
       end
     end
 
-    def initialize(message)
+    def initialize(message, dispatcher)
       @message = message
-      @topic = @message.notification_topic
-      @timer = every(5) { heartbeat }
+      @dispatcher = dispatcher
       log_data
     end
 
     def complete
-      @timer.cancel
-      publish_to_message :complete
+      @dispatcher.worker_completed
     end
 
     def failed
-      @timer.cancel
-      publish_to_message :died
+      @dispatcher.worker_failed
     end
 
     def logger
@@ -74,15 +71,7 @@ module Envoy
       rescue => e
         error log_data.merge(at: 'safely'), e
         failed
-      ensure
-        # rubocop:disable Style/RescueModifier
-        terminate rescue DeadActorError
-        # rubocop:enable Style/RescueModifier
       end
-    end
-
-    def heartbeat
-      publish_to_message :heartbeat
     end
 
     def log_data

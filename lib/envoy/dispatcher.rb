@@ -53,8 +53,8 @@ module Envoy
     end
 
     def actor_died actor, reason
-      warn log_data.merge(at: 'actor_died', actor: actor, reason: reason)
-      @timer.cancel
+      warn log_data.merge(at: 'actor_died', reason: reason)
+      @timer.cancel if @timer
       @worker_running = false
     end
 

@@ -3,7 +3,7 @@ module Envoy
     class Airbrake
       def initialize app, worker
         @app = app
-        @headers = @worker.message.headers
+        @headers = worker.message.headers
       end
 
       def call env

@@ -1,42 +1,41 @@
-$:.push File.expand_path("../lib", __FILE__)
+$LOAD_PATH.push File.expand_path('../lib', __FILE__)
 
 # Maintain your gem's version:
-require "envoy/version"
+require 'envoy/version'
 
-Gem::Specification.new do |spec|
-  spec.name          = "envoy"
-  spec.version       = Envoy::VERSION
-  spec.authors       = ["Adam Carlile", "Lee Henson"]
-  spec.email         = ["adam@benchmedia.co.uk", "lee.m.henson@gmail.com"]
-  spec.summary       = %q{SQS-based job processing}
-  spec.description   = %q{SQS-based job processing}
-  spec.homepage      = "https://github.com/musicglue/envoy"
-  spec.license       = "MIT"
+# Describe your gem and declare its dependencies:
+Gem::Specification.new do |s|
+  s.name        = 'envoy'
+  s.version     = Envoy::VERSION
+  s.authors     = ['Lee Henson']
+  s.email       = ['lee.m.henson@gmail.com']
+  s.homepage    = 'https://github.com/musicglue/envoy'
+  s.summary     = 'SQS job consumer'
+  s.description = 'SQS job consumer'
+  s.license     = 'MIT'
 
-  spec.files         = `git ls-files -z`.split("\x0")
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = Dir["test/**/*"]
+  s.files = Dir['{app,bin,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.rdoc']
+  s.executables = s.files.grep(/^bin\//) { |f| File.basename(f) }
+  s.test_files = Dir['test/**/*']
+  s.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'aws-sdk-core'
-  spec.add_runtime_dependency 'celluloid', ">= 0.16"
-  spec.add_runtime_dependency 'middleware'
-  spec.add_runtime_dependency 'nokogiri'
-  spec.add_runtime_dependency "rails", ">= 4.1"
-  spec.add_runtime_dependency 'timers', '>= 4.0.1'
+  s.add_runtime_dependency 'aws-sdk-core'
+  s.add_runtime_dependency 'celluloid', '>= 0.16'
+  s.add_runtime_dependency 'middleware'
+  s.add_runtime_dependency 'nokogiri'
+  s.add_runtime_dependency 'rails', '>= 4.1'
+  s.add_runtime_dependency 'timers', '>= 4.0.1'
 
-  spec.add_development_dependency "awesome_print"
-  spec.add_development_dependency "bundler", "~> 1.6"
-  spec.add_development_dependency "guard"
-  spec.add_development_dependency "guard-minitest"
-  spec.add_development_dependency "guard-rubocop"
-  spec.add_development_dependency "pg"
-  spec.add_development_dependency "pry-byebug"
-  spec.add_development_dependency "rake"
-  spec.add_development_dependency "minitest"
-  spec.add_development_dependency "minitest-focus"
-  spec.add_development_dependency "minitest-rg"
-  spec.add_development_dependency "minitest-spec-rails"
-  spec.add_development_dependency "simplecov"
-  spec.add_development_dependency "vcr"
-  spec.add_development_dependency "webmock"
+  s.add_development_dependency 'awesome_print'
+  s.add_development_dependency 'bundler', '~> 1.6'
+  s.add_development_dependency 'guard'
+  s.add_development_dependency 'guard-minitest'
+  s.add_development_dependency 'guard-rubocop'
+  s.add_development_dependency 'minitest'
+  s.add_development_dependency 'minitest-focus'
+  s.add_development_dependency 'minitest-rg'
+  s.add_development_dependency 'minitest-spec-rails'
+  s.add_development_dependency 'pg'
+  s.add_development_dependency 'pry-byebug'
+  s.add_development_dependency 'rake'
 end

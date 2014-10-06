@@ -13,5 +13,13 @@ module Envoy
         raise e
       end
     end
+
+    module ::Envoy::Worker
+      module ClassMethods
+        def airbrake
+          middleware << Airbrake
+        end
+      end
+    end
   end
 end

@@ -15,6 +15,14 @@ module Envoy
           end
         end
       end
+
+      module ::Envoy::Worker
+        module ClassMethods
+          def transactional_active_record
+            middleware << Transactional
+          end
+        end
+      end
     end
   end
 end

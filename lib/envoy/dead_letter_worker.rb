@@ -2,7 +2,7 @@ module Envoy
   class DeadLetterWorker
     include Envoy::Worker
 
-    middleware << Envoy::Middlewares::ActiveRecord
+    active_record
 
     def process
       unless DeadLetter.exists?(docket_id: message.id)

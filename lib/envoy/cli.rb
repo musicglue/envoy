@@ -25,11 +25,11 @@ module Envoy
       end
       include_external_environment
       print_banner
-      Envoy.start!
+      Envoy.start
       sleep
     rescue Interrupt
-      Envoy.shutdown!
-      exit(0)
+      Envoy.stop
+      exit 0
     end
 
     def include_external_environment
@@ -72,7 +72,7 @@ module Envoy
     end
 
     def print_banner
-      Celluloid.logger.info "Starting Envoy under #{Rails.env} environment: v#{Envoy::VERSION} (Pikaia)"
+      Celluloid.logger.info "Starting Envoy under #{Rails.env} environment: v#{Envoy::VERSION} (Reboot)"
     end
 
     def handle_signal(signal)

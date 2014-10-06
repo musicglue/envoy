@@ -6,12 +6,16 @@ module Envoy
       def initialize name
         @name = name
         @delay_seconds = 0
+        @message_concurrency = 10
+        @message_heartbeat_interval = 5
         @message_retention_period = 1_209_600
         @visibility_timeout = 30
         @subscriptions = SubscriptionConfiguration.new @name
       end
 
       attr_accessor :delay_seconds,
+                    :message_concurrency,
+                    :message_heartbeat_interval,
                     :message_retention_period,
                     :visibility_timeout,
                     :subscriptions

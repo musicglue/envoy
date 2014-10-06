@@ -13,8 +13,8 @@ module Envoy
       copy_file 'initializer.rb', 'config/initializers/envoy.rb'
       copy_file 'dead_letter.rb', 'app/models/dead_letter.rb'
 
-      migration_template "create_dead_letters_migration.rb",
-                         "db/migrate/envoy_create_dead_letters.rb"
+      migration_template 'create_dead_letters_migration.rb',
+                         'db/migrate/envoy_create_dead_letters.rb'
     end
   end
 end

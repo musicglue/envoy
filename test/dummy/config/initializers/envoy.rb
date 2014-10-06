@@ -20,6 +20,10 @@ Envoy.configure do |config|
     config.sqs.protocol = 'cqs'
   end
 
+  # Fetcher configuration:
+  #
+  #   config.fetcher.concurrent_messages_limit = 10
+
   # Callbacks configuration:
   #
   #   config.callbacks.message_died = ->(message) { ... }
@@ -32,28 +36,28 @@ Envoy.configure do |config|
   # Queue defaults configuration:
   #
   #   config.queue_defaults.delay_seconds = 0
-  #   config.queue_defaults.message_concurrency = 10
   #   config.queue_defaults.message_retention_period = 1_209_600
   #   config.queue_defaults.visibility_timeout = 30
   #
   #   config.queue_defaults.redrive_policy.enabled = true
   #   config.queue_defaults.redrive_policy.max_receive_count = 10
 
+  config.queue_defaults.redrive_policy.dead_letter_queue = 'dead_letters'
+
   # Subscription defaults configuration:
   #
   #   config.subscription_defaults.raw_message_delivery = true
 
   # Queue configuration:
-  #
-  #   config.add_dead_letter_queue 'my_dlq'
-  #
-  #   config.add_queue('important_events_queue') do |queue, subscriptions|
-  #     queue.redrive_policy.dead_letter_queue = 'my_dlq'
-  #     subscriptions.add 'something_happened', 'MyWorker'
-  #   end
-  #
-  #   config.add_queue('unimportant_events_queue') do |queue, subscriptions|
-  #     queue.redrive_policy.enabled = false
-  #     subscriptions.add 'something_else_happened', 'MyOtherWorker'
-  #   end
+
+  config.add_dead_letter_queue 'dead_letters'
+
+  config.add_queue('important_events_queue') do |_queue, subscriptions|
+    subscriptions.add 'something_happened', 'MyWorker'
+  end
+
+  config.add_queue('unimportant_events_queue') do |queue, subscriptions|
+    queue.redrive_policy.enabled = false
+    subscriptions.add 'something_else_happened', 'MyOtherWorker'
+  end
 end

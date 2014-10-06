@@ -1,7 +1,6 @@
 AllCops:
-  Include:
-    - Rakefile
   Exclude:
+    - Guardfile
     - bin/**/*
     - db/**/*
     - config/**/*
@@ -27,6 +26,9 @@ DoubleNegation:
 Encoding:
   EnforcedStyle: when_needed
 
+HandleExceptions:
+  Enabled: false
+
 LineLength:
   Max: 120
 
@@ -37,4 +39,7 @@ MethodLength:
   Enabled: false
 
 MultilineBlockChain:
+  Enabled: false
+
+RescueModifier:
   Enabled: false

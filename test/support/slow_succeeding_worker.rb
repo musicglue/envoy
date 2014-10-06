@@ -1,7 +1,7 @@
-class BrokenWorker
+class SlowSucceedingWorker
   include Envoy::Worker
 
   def process
-    fail
+    sleep 1
   end
 end

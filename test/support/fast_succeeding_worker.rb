@@ -1,7 +1,6 @@
-class SlowWorker
+class FastSucceedingWorker
   include Envoy::Worker
 
   def process
-    Kernel.sleep 3
   end
 end

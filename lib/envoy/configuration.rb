@@ -55,7 +55,7 @@ module Envoy
 
       return if valid?
 
-      fail %(Invalid configuration: \n\n#{config.errors.join("\n")}\n\n)
+      fail %(Invalid configuration: \n\n#{errors.join("\n")}\n\n)
     end
 
     def add_dead_letter_queue name
@@ -80,7 +80,11 @@ module Envoy
     end
 
     def get_queue name
-      @queues[name]
+      if @dead_letter_queue && @dead_letter_queue.name == name
+        @dead_letter_queue
+      else
+        @queues[name]
+      end
     end
 
     def update_aws

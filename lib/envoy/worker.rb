@@ -7,12 +7,11 @@ module Envoy
       include Celluloid::Notifications
       include Envoy::Logging
 
-      attr_reader :message, :topic
+      attr_reader :log_data, :message
 
-      if defined? ::NewRelic
+      if defined?(::NewRelic)
         include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
-
-        add_transaction_tracer :safely_process, category: :task
+        add_transaction_tracer :process_for_watchdog, category: :task
       end
     end
 
@@ -22,74 +21,35 @@ module Envoy
       end
     end
 
-    def initialize(message, dispatcher)
+    def initialize message
       @message = message
-      @dispatcher = dispatcher
-      log_data
-    end
 
-    def complete
-      @dispatcher.worker_completed
-    end
-
-    def failed
-      @dispatcher.worker_failed
+      @log_data = {
+        component: self.class.to_s.underscore,
+        queue: message.queue,
+        message_sqs_id: message.sqs_id,
+        message_id: message.id,
+        message_type: message.type
+      }
     end
 
     def logger
       Envoy::Logging
     end
 
-    def safely_process
-      if defined? ::NewRelic
-        NewRelic::Agent.set_transaction_name("Envoy/#{self.class.name.underscore}")
-      end
-
-      safely do
-        stack = ::Middleware::Builder.new
-        (self.class.middleware + [Envoy::Middlewares::Worker]).each { |m| stack.use m, self }
-        stack.call
+    def middleware
+      ::Middleware::Builder.new.tap do |stack|
+        middlewares = self.class.middleware + [Envoy::Middlewares::Worker]
+        middlewares.each { |m| stack.use m, self }
       end
     end
 
     def process
-      fail NotImplemetedError
+      fail NotImplementedError
     end
 
-    def safely
-      return unless block_given?
-
-      info log_data.merge(at: 'before_process')
-
-      begin
-        start_time = Time.now
-        yield
-        end_time = Time.now
-
-        info log_data.merge(at: 'after_process', duration: "#{(end_time - start_time).round}s")
-        complete
-      rescue => e
-        error log_data.merge(at: 'safely'), e
-        failed
-      end
-    end
-
-    def log_data
-      @log_data ||= {
-        component: 'worker',
-        worker: self.class.name,
-        queue: @message.queue_name,
-        message_id: @message.id,
-        message_type: @message.type,
-        sqs_id: @message.sqs_id,
-        topic: @topic
-      }
-    end
-
-    def publish_to_message *args
-      publish @topic, *args
-    rescue Celluloid::DeadActorError => e
-      warn log_data.merge(at: 'publish_to_message', args: args.inspect), e
+    def process_for_watchdog
+      middleware.call
     end
   end
 end

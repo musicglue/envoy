@@ -47,7 +47,7 @@ module Envoy
       @sqs.extend_message_invisibility(
         @name,
         @register[sqs_id].message.receipt_handle,
-        @queue_config.message_heartbeat_interval)
+        @queue_config.visibility_timeout)
     end
 
     def start

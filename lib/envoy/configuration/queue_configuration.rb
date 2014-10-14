@@ -3,11 +3,13 @@ module Envoy
     class QueueConfiguration
       include Validatable
 
+      HEARTBEAT_INTERVAL_EXTENSION = 5
+
       def initialize name
         @name = name
         @delay_seconds = 0
         @message_concurrency = 10
-        @message_heartbeat_interval = 5
+        @message_heartbeat_interval = 25
         @message_retention_period = 1_209_600
         @visibility_timeout = 30
         @subscriptions = SubscriptionConfiguration.new @name
@@ -43,6 +45,14 @@ module Envoy
 
         unless (0..43_200).include? visibility_timeout
           errors << "#{name}.visibility_timeout must be in the range 0..43200"
+        end
+
+        unless message_heartbeat_interval > 5
+          errors << "#{name}.message_heartbeat_interval must be greater than 5 seconds"
+        end
+
+        unless message_heartbeat_interval <= (visibility_timeout - 5)
+          errors << "#{name}.message_heartbeat_interval must be at least 5 seconds less than it's visibility_timeout"
         end
 
         redrive_policy.valid?

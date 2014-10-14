@@ -17,6 +17,12 @@ GuardClause:
 ClassAndModuleChildren:
   Enabled: false
 
+ClassLength:
+  Max: 125
+
+CyclomaticComplexity:
+  Enabled: false
+
 Documentation:
   Enabled: false
 

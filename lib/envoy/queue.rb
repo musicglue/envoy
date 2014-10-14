@@ -123,7 +123,7 @@ module Envoy
     end
 
     def sleep_time
-      (@messages_dequeued == 0) && (@register.free == 0) ? 1 : 0.1
+      (@messages_dequeued == 0) || (@register.free == 0) ? 1 : 0.1
     end
 
     def handle_completed_message sqs_id

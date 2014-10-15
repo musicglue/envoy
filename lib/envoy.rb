@@ -8,6 +8,7 @@ require 'securerandom'
 
 require 'envoy/version'
 require 'envoy/logging'
+require 'envoy/active_record'
 require 'envoy/configuration'
 require 'envoy/environmental_name'
 require 'envoy/message'

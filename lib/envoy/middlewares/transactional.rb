@@ -13,7 +13,7 @@ module Envoy
       rescue ActiveRecord::StatementInvalid => error
         if error.message =~ /PG::TRSerializationFailure/
           callback = options[:on_serialization_failure]
-          @worker.send callback if callback && @worker.respond_to? callback
+          @worker.send(callback) if callback && @worker.respond_to?(callback)
 
           retry
         end

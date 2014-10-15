@@ -10,7 +10,7 @@ module Envoy
         with_transaction(options) do
           @app.call env
         end
-      rescue ActiveRecord::StatementInvalid => error
+      rescue ::ActiveRecord::StatementInvalid => error
         if error.message =~ /PG::TRSerializationFailure/
           callback = options[:on_serialization_failure]
           @worker.send(callback) if callback && @worker.respond_to?(callback)

@@ -1,8 +1,10 @@
 module Envoy
   module Middlewares
     class Airbrake
+      include Middleware
+
       def initialize app, worker
-        @app = app
+        super
         @headers = worker.message.headers
       end
 
@@ -17,7 +19,7 @@ module Envoy
     module ::Envoy::Worker
       module ClassMethods
         def airbrake
-          middleware << Airbrake
+          add_middleware Airbrake
         end
       end
     end

@@ -1,8 +1,10 @@
 module Envoy
   module Middlewares
     class Timing
+      include Middleware
+
       def initialize app, worker
-        @app = app
+        super
         @worker_class = worker.class
       end
 
@@ -18,7 +20,7 @@ module Envoy
     module ::Envoy::Worker
       module ClassMethods
         def timing
-          middleware << Timing
+          add_middleware Timing
         end
       end
     end

@@ -19,6 +19,17 @@ module Envoy
       def middleware
         @middleware ||= []
       end
+
+      def add_middleware klass, opts = nil
+        return if middleware.include? klass
+
+        middleware << klass
+        middleware_options[klass.options_key_name] = opts if opts
+      end
+
+      def middleware_options
+        @middleware_options ||= {}
+      end
     end
 
     def initialize message

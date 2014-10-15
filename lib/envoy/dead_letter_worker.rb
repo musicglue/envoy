@@ -2,7 +2,8 @@ module Envoy
   class DeadLetterWorker
     include Envoy::Worker
 
-    active_record
+    connection_pool
+    transactional isolation: :serializable
 
     def process
       unless DeadLetter.exists?(docket_id: message.id)

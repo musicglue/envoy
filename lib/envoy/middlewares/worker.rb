@@ -1,10 +1,7 @@
 module Envoy
   module Middlewares
     class Worker
-      def initialize app, worker
-        @app = app
-        @worker = worker
-      end
+      include Middleware
 
       def call env
         @app.call env

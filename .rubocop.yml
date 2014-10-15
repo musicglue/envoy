@@ -49,3 +49,6 @@ MultilineBlockChain:
 
 RescueModifier:
   Enabled: false
+
+TrivialAccessors:
+  Enabled: false

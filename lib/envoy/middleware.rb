@@ -8,7 +8,7 @@ module Envoy
     end
 
     def options
-      @worker.middleware_options[self.class.options_key_name]
+      @worker.class.middleware_options[self.class.options_key_name]
     end
 
     module ClassMethods

@@ -7,7 +7,7 @@ module Envoy
       options_key :transactional
 
       def call env
-        with_transaction(options) do
+        with_transaction(options.except(:on_serialization_failure)) do
           @app.call env
         end
       rescue ::ActiveRecord::StatementInvalid => error

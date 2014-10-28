@@ -154,6 +154,14 @@ module Envoy
         topic_arn = sns_topic_arn topic
         subscription_log_data = log_data.merge queue_arn: queue_arn, topic_arn: topic_arn
 
+        if @config.sns.protocol == 'cqs'
+          info subscription_log_data.merge step: 'adding_subscribe_permission'
+          sns.add_permission topic_arn: topic_arn,
+                             label: "subscribe-#{@config.aws.account_id}-#{Time.now.strftime('%Y%m%d%H%M%S')}",
+                             aws_account_id: [@config.aws.account_id],
+                             action_name: ['Subscribe']
+        end
+
         info subscription_log_data.merge step: 'subscribing_queue_to_topic', protocol: @config.sns.protocol
         subscription_arn = sns.subscribe(
           endpoint: queue_arn,

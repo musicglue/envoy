@@ -1,3 +1,5 @@
+require_relative '../active_record'
+
 module Envoy
   module Middlewares
     class ConnectionPool

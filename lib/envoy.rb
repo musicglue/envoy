@@ -2,6 +2,10 @@ require 'active_support/concern'
 require 'active_support/core_ext/module/delegation'
 require 'active_attr'
 require 'aws-sdk-core'
+require 'celluloid'
+require 'middleware'
+require 'nokogiri'
+require 'securerandom'
 
 require 'envoy/version'
 require 'envoy/logging'
@@ -18,6 +22,16 @@ require 'envoy/middleware'
 require 'envoy/railtie'
 require 'envoy/sns'
 require 'envoy/sqs'
+
+require 'envoy/middlewares/worker'
+require 'envoy/queue'
+require 'envoy/queue/register'
+require 'envoy/received_message'
+require 'envoy/router'
+require 'envoy/supervision_group'
+require 'envoy/watchdog'
+require 'envoy/watchdog/message_topics'
+require 'envoy/worker'
 
 module Envoy
   module_function

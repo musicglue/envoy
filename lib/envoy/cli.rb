@@ -1,21 +1,7 @@
-require 'celluloid'
 require 'fileutils'
-require 'middleware'
-require 'nokogiri'
 require 'optparse'
-require 'securerandom'
 
 require_relative '../envoy'
-
-require 'envoy/middlewares/worker'
-require 'envoy/queue'
-require 'envoy/queue/register'
-require 'envoy/received_message'
-require 'envoy/router'
-require 'envoy/supervision_group'
-require 'envoy/watchdog'
-require 'envoy/watchdog/message_topics'
-require 'envoy/worker'
 
 module Envoy
   class CLI

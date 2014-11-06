@@ -16,7 +16,7 @@ describe Envoy::Watchdog do
       body: {}
     }
 
-    @message = Envoy::Message.new SecureRandom.uuid, SecureRandom.uuid, 'watchdog_test', payload
+    @message = Envoy::ReceivedMessage.new SecureRandom.uuid, SecureRandom.uuid, 'watchdog_test', payload
     @queue = StubQueue.new 'watchdog_test', StubSqs.new, config
   end
 

@@ -10,7 +10,7 @@ describe Envoy::Queue::Register do
       body: {}
     }
 
-    Envoy::Message.new SecureRandom.uuid, SecureRandom.uuid, 'queue-name', payload
+    Envoy::ReceivedMessage.new SecureRandom.uuid, SecureRandom.uuid, 'queue-name', payload
   end
 
   before do

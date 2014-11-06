@@ -10,6 +10,7 @@ require 'minitest-spec-rails'
 require 'pry-byebug'
 require 'celluloid/test'
 require 'envoy'
+require 'envoy/cli'
 
 Rails.backtrace_cleaner.remove_silencers!
 

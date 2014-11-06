@@ -8,12 +8,12 @@ module Envoy
 
     module ClassMethods
       def topic_name
-        to_s.underscore.dasherize.sub /-message$/, ''
+        to_s.underscore.dasherize.sub(/-message$/, '')
       end
     end
 
     def publish!
-      raise Envoy::MessageInvalid, errors if invalid?
+      fail Envoy::MessageInvalid, errors if invalid?
 
       Envoy::MessagePublisher.new.publish self
     end

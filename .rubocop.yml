@@ -8,6 +8,9 @@ AllCops:
     - vendor/**/*
     - lib/generators/**/*
 
+AbcSize:
+  Enabled: false
+
 AmbiguousOperator:
   Enabled: false
 

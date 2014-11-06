@@ -10,7 +10,7 @@ module Envoy
       attr_accessor :endpoint, :protocol
 
       def validate
-        errors << "sns.protocol must be either sqs or cqs" unless %w(sqs cqs).include? protocol
+        errors << 'sns.protocol must be either sqs or cqs' unless %w(sqs cqs).include? protocol
       end
     end
   end

@@ -1,5 +1,11 @@
 module Envoy
   class Sqs
+    def self.client config
+      attrs = {}
+      attrs[:endpoint] = config.sqs.endpoint unless config.sqs.endpoint.blank?
+      Aws::SQS::Client.new attrs
+    end
+
     ReceivedMessages = Struct.new :valid, :invalid
 
     def initialize client
@@ -48,7 +54,7 @@ module Envoy
 
       raw_messages.each do |message|
         begin
-          messages.valid << Message.new(
+          messages.valid << ReceivedMessage.new(
             message[:message_id],
             message[:receipt_handle],
             queue_name,

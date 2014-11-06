@@ -1,31 +1,23 @@
 require 'active_support/concern'
 require 'active_support/core_ext/module/delegation'
+require 'active_attr'
 require 'aws-sdk-core'
-require 'celluloid'
-require 'middleware'
-require 'nokogiri'
-require 'securerandom'
 
 require 'envoy/version'
 require 'envoy/logging'
-require 'envoy/active_record'
+
+require 'envoy/arns'
+require 'envoy/dead_letter_retrier'
 require 'envoy/configuration'
 require 'envoy/environmental_name'
-require 'envoy/message'
-require 'envoy/message_sanitizer'
-require 'envoy/dead_letter_retrier'
 require 'envoy/infrastructure_builder'
-require 'envoy/sqs'
-require 'envoy/router'
-require 'envoy/queue/register'
-require 'envoy/queue'
+require 'envoy/message'
+require 'envoy/message_publisher'
+require 'envoy/message_sanitizer'
 require 'envoy/middleware'
-require 'envoy/middlewares/worker'
-require 'envoy/worker'
-require 'envoy/watchdog/message_topics'
-require 'envoy/watchdog'
-require 'envoy/supervision_group'
 require 'envoy/railtie'
+require 'envoy/sns'
+require 'envoy/sqs'
 
 module Envoy
   module_function
@@ -49,12 +41,7 @@ module Envoy
     Celluloid.shutdown_timeout = 1
     Celluloid.start
 
-    attrs = {}
-    attrs[:endpoint] = config.sqs.endpoint unless config.sqs.endpoint.blank?
-
-    sqs = Envoy::Sqs.new Aws::SQS::Client.new attrs
-
-    @group = Envoy::SupervisionGroup.new config, sqs
+    @group = Envoy::SupervisionGroup.new config, Envoy::Sqs.new(Envoy::Sqs.client config)
     @group.start
   end
 

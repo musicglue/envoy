@@ -1,33 +1,50 @@
 module Envoy
-  class Message
-    InvalidMessagePayloadError = Class.new StandardError
+  module Message
+    extend ActiveSupport::Concern
 
-    def initialize sqs_id, receipt_handle, queue, payload
-      @sqs_id = sqs_id
-      @receipt_handle = receipt_handle
-      @queue = queue
-      @payload = payload
+    included do
+      include ActiveAttr::Model
+    end
 
-      @headers = @payload[:headers] || @payload[:header]
-      @body = @payload[:body]
-
-      unless @headers.key?(:id) && @headers.key?(:type) && @body.is_a?(Hash)
-        fail InvalidMessagePayloadError
+    module ClassMethods
+      def topic_name
+        to_s.underscore.dasherize.sub /-message$/, ''
       end
     end
 
-    attr_reader :sqs_id, :receipt_handle, :queue, :headers, :body
+    def publish!
+      raise Envoy::MessageInvalid, errors if invalid?
 
-    def id
-      @headers[:id]
+      Envoy::MessagePublisher.new.publish self
     end
 
-    def type
-      @headers[:type]
+    def topic_name
+      self.class.topic_name
     end
 
     def to_h
-      @payload
+      payload
+    end
+
+    private
+
+    def envoy_id
+      @envoy_id ||= SecureRandom.uuid
+    end
+
+    def headers
+      {}
+    end
+
+    def payload
+      {
+        header: headers.merge(id: envoy_id, type: topic_name, version: version),
+        body: attributes
+      }
+    end
+
+    def version
+      1
     end
   end
 end

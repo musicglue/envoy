@@ -6,6 +6,7 @@ module Envoy
     def initialize config
       @config = config
       @config.validate!
+      @arns = Envoy::Arns.new @config
       @log_data ||= { component: 'infrastructure_builder' }
     end
 
@@ -31,7 +32,7 @@ module Envoy
     end
 
     def build_topics
-      sns = sns_client
+      sns = Envoy::Sns.client @config
       log_data = @log_data.merge at: 'build_topics', endpoint: sns.config[:endpoint].to_s
 
       all_topics.each do |topic|
@@ -60,8 +61,8 @@ module Envoy
     end
 
     def application_policy
-      topic_arns = all_topics.map { |topic| sns_topic_arn topic }
-      queue_arns = all_queues.map { |queue| sqs_queue_arn queue }
+      topic_arns = all_topics.map { |topic| @arns.sns_topic_arn topic }
+      queue_arns = all_queues.map { |queue| @arns.sqs_queue_arn queue }
 
       <<-EOS.strip_heredoc
       {
@@ -85,7 +86,7 @@ module Envoy
               "sns:SetSubscriptionAttributes"
             ],
             "Resource": [
-              "#{sns_topic_arn '*'}"
+              "#{@arns.sns_topic_arn '*'}"
             ]
           },
           {
@@ -109,8 +110,8 @@ module Envoy
     end
 
     def create_queue log_data, queue, subscribed_topics, permitted_topics
-      sqs = sqs_client
-      sns = sns_client
+      sqs = Envoy::Sqs.client @config
+      sns = Envoy::Sns.client @config
 
       sqs_endpoint = sqs.config[:endpoint].to_s
       sns_endpoint = sns.config[:endpoint].to_s
@@ -151,7 +152,7 @@ module Envoy
       sqs.set_queue_attributes queue_url: queue_url, attributes: attributes
 
       subscribed_topics.each do |topic|
-        topic_arn = sns_topic_arn topic
+        topic_arn = @arns.sns_topic_arn topic
         subscription_log_data = log_data.merge queue_arn: queue_arn, topic_arn: topic_arn
 
         if @config.sns.protocol == 'cqs'
@@ -184,8 +185,8 @@ module Envoy
     end
 
     def queue_policy queue, topics
-      queue_arn = sqs_queue_arn queue
-      topic_arns = topics.map { |topic| sns_topic_arn topic }
+      queue_arn = @arns.sqs_queue_arn queue
+      topic_arns = topics.map { |topic| @arns.sns_topic_arn topic }
 
       <<-EOS.strip_heredoc
       {
@@ -213,44 +214,8 @@ module Envoy
     end
 
     def redrive_policy dead_letter_queue, max_receive_count
-      arn = sqs_queue_arn EnvironmentalName.new(dead_letter_queue).to_s
+      arn = @arns.sqs_queue_arn EnvironmentalName.new(dead_letter_queue).to_s
       %({"maxReceiveCount":"#{max_receive_count}", "deadLetterTargetArn":"#{arn}"})
-    end
-
-    def sns_arn
-      if @config.sns.protocol == 'cqs'
-        "arn:cmb:cns:ccp:#{@config.aws.account_id}"
-      else
-        "arn:aws:sns:#{@config.aws.region}:#{@config.aws.account_id}"
-      end
-    end
-
-    def sns_client
-      attrs = {}
-      attrs[:endpoint] = @config.sns.endpoint unless @config.sns.endpoint.blank?
-      Aws::SNS::Client.new attrs
-    end
-
-    def sns_topic_arn topic
-      "#{sns_arn}:#{topic}"
-    end
-
-    def sqs_arn
-      if @config.sqs.protocol == 'cqs'
-        "arn:cmb:cqs:ccp:#{@config.aws.account_id}"
-      else
-        "arn:aws:sqs:#{@config.aws.region}:#{@config.aws.account_id}"
-      end
-    end
-
-    def sqs_client
-      attrs = {}
-      attrs[:endpoint] = @config.sqs.endpoint unless @config.sqs.endpoint.blank?
-      Aws::SQS::Client.new attrs
-    end
-
-    def sqs_queue_arn queue
-      "#{sqs_arn}:#{queue}"
     end
 
     def wait_for_queue sqs, name

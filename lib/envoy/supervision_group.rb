@@ -26,7 +26,7 @@ module Envoy
         end
       end
 
-      sleep 7 # give the actors as much time as possible to shutdown gracefully
+      sleep 6 # give the actors as much time as possible to shutdown gracefully
     end
 
     private

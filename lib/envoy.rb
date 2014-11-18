@@ -5,6 +5,7 @@ require 'aws-sdk-core'
 require 'celluloid'
 require 'middleware'
 require 'nokogiri'
+require 'retryable'
 require 'securerandom'
 
 require 'envoy/version'

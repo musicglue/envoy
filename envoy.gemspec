@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'middleware'
   s.add_runtime_dependency 'nokogiri'
   s.add_runtime_dependency 'rails', '>= 4.1'
+  s.add_runtime_dependency 'retryable'
   s.add_runtime_dependency 'timers', '>= 4.0.1'
 
   s.add_development_dependency 'awesome_print'

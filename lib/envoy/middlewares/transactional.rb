@@ -1,4 +1,5 @@
 require_relative '../active_record'
+require_relative 'transactional/retrier'
 
 module Envoy
   module Middlewares
@@ -9,26 +10,24 @@ module Envoy
       options_key :transactional
 
       def call env
-        with_transaction(options.except(:on_record_not_unique_failure, :on_serialization_failure)) do
-          @app.call env
+        Retrier.new(retrier_options).call do
+          with_transaction(transaction_options) do
+            @app.call env
+          end
         end
-      rescue ::ActiveRecord::RecordNotUnique
-        try_failure_callback :on_record_not_unique_failure
-        retry
-      rescue ::ActiveRecord::StatementInvalid => error
-        if error.message =~ /PG::TRSerializationFailure/
-          try_failure_callback :on_serialization_failure
-          retry
-        end
-
-        raise error
       end
 
       private
 
-      def try_failure_callback option_name
-        return unless callback = options[option_name]
-        @worker.send(callback) if @worker.respond_to?(callback)
+      def retrier_options
+        retrier_options = options.slice :tries, :sleep, :on_error
+        on_error = retrier_options.delete :on_error
+        retrier_options[:exception_cb] = @worker.method(on_error) unless on_error.blank?
+        retrier_options
+      end
+
+      def transaction_options
+        options.slice :requires_new, :joinable, :isolation
       end
     end
 

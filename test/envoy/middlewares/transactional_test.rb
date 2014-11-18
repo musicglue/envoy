@@ -5,7 +5,7 @@ describe Envoy::Middlewares::Transactional do
   class MiddlewareTestWorker
     include Envoy::Worker
 
-    transactional isolation: :repeatable_read, tries: 3, on_error: :store_error
+    transactional isolation: :repeatable_read, tries: 3, on_retriable_error: :store_error
 
     def initialize error_to_raise, tried_callback, on_error_callback
       @error_to_raise = error_to_raise

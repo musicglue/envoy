@@ -3,7 +3,7 @@ module Envoy
     module_function
 
     def escape string
-      string.gsub(/"/, '"')
+      string.gsub(/"/, '"').gsub("\n", ' ')
     end
 
     def format_backtrace backtrace

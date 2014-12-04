@@ -7,8 +7,8 @@ module Envoy
         end
 
         def call &block
-          retryable(@options.merge(on: [::ActiveRecord::RecordNotUnique])) do
-            retryable(@options.merge(matching: /TRDeadlockDetected|TRSerializationFailure/)) do
+          Retryable.retryable(@options.merge(on: [::ActiveRecord::RecordNotUnique])) do
+            Retryable.retryable(@options.merge(matching: /TRDeadlockDetected|TRSerializationFailure/)) do
               yield block
             end
           end

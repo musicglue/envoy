@@ -45,6 +45,10 @@ module Envoy
     yield config
   end
 
+  def running?
+    !!@running
+  end
+
   def start
     return if @running
     @running = true
